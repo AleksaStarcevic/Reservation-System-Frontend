@@ -32,6 +32,7 @@ const events = [
 	},
 	{
 		title: "Vacation",
+		desc: "aaaa",
 		start: new Date(2022, 7, 7),
 		end: new Date(2022, 7, 10),
 	},
@@ -44,37 +45,69 @@ const events = [
 
 function MainPage() {
 	const { auth } = useContext(AuthContext);
-	const [appointments, setAppointments] = useState([]);
 
 	const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
 	const [allEvents, setAllEvents] = useState(events);
+	const [classroomTypes, setClassroomTypes] = useState([]);
 
 	function handleAddEvent() {
 		setAllEvents([...allEvents, newEvent]);
 	}
 
 	useEffect(() => {
-		const fetchTypes = async () => {
+		const fetchClassroomTypes = async () => {
 			try {
-				var date1 = new Date("2022, 06, 22");
-				var dateFormat = moment(date1).format("YYYY-MM-DD");
+				let response = await axios.get(`common/classroom/names`, {
+					headers: { Authorization: `Bearer ${auth.token}` },
+				});
+				// zaglavlje tabele
+				let resourceMap = [];
+				response.data.forEach(el => {
+					resourceMap.push({
+						resourceId: el.id,
+						resourceTitle: el.name,
+					});
+				});
 
-				console.log(dateFormat);
+				setClassroomTypes(resourceMap);
 
-				const response = await axios.post(
-					`/appointment/${dateFormat}`,
-					{},
-					{ headers: { Authorization: `Bearer ${auth.token}` } }
-				);
-
-				console.log(response.data);
-				setAppointments(response.data);
+				console.log(resourceMap);
 			} catch (err) {
 				console.log("ERROR!!!" + err); // not in 200
 			}
 		};
 
-		fetchTypes();
+		const fetchAppointments = async () => {
+			try {
+				// var date1 = new Date("2022, 06, 22");
+				// var dateFormat = moment(date1).format("YYYY-MM-DD");
+				// const response = await axios.post(`/appointment/${dateFormat}`,{},{ headers: { Authorization: `Bearer ${auth.token}` } });
+
+				let response = await axios.get(`/appointment`, { headers: { Authorization: `Bearer ${auth.token}` } });
+
+				const appointments = response.data;
+				const newAr = [];
+				// transformacija niza iz baze u niz za prikaz
+				appointments.forEach(el => {
+					const dates = el.date.split("-");
+
+					newAr.push({
+						id: el.id,
+						start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, el.end_timeInHours, 0, 0),
+						title: el.name,
+					});
+				});
+
+				console.log(newAr);
+
+				setAllEvents();
+			} catch (err) {
+				console.log("ERROR!!!" + err); // not in 200
+			}
+		};
+
+		fetchClassroomTypes();
+		fetchAppointments();
 	}, []);
 
 	return (
@@ -110,6 +143,9 @@ function MainPage() {
 				startAccessor="start"
 				endAccessor="end"
 				style={{ height: 500, margin: "50px" }}
+				resourceIdAccessor="resourceId"
+				resources={classroomTypes}
+				resourceTitleAccessor="resourceTitle"
 			/>
 		</div>
 	);
