@@ -27,49 +27,40 @@ function Login() {
 		e.preventDefault();
 		setUser("");
 		setPassword("");
-		setSuccess(true);
 
-		try {
-			const response = await axios.post(
-				"/login",
-				new URLSearchParams({
-					username: user,
-					password: password,
-				}), // username kao za dto
-				{
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-				}
-			);
-
-			const accessToken = response?.headers?.validationtoken;
-			const userEmail = response?.headers?.EMAIL;
-
-			setAuth({ email: userEmail, token: accessToken });
-
-			// console.log(response.headers);
-		} catch (err) {
-			if (!err?.response) {
-				setErrorMessage("NO RESPONSE");
-			} else if (err.response?.status === 400) {
-				setErrorMessage("Missing username or password");
-			} else if (err.response?.status === 401) {
-				setErrorMessage("Unathorized");
-			} else {
-				setErrorMessage("Login failed!");
+		const response = await axios.post(
+			"/login",
+			new URLSearchParams({
+				username: user,
+				password: password,
+			}), // username kao za dto
+			{
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
 			}
-		}
-	}
+		);
 
-	if (success === true) {
-		navigate("/main");
+		if (response.headers.validationtoken) {
+			setSuccess(true);
+		}
+
+		const accessToken = response?.headers?.validationtoken;
+		setAuth({ email: user, token: accessToken });
+
+		// if (response.status === 400) {
+		// 	setErrorMessage("Missing username or password");
+		// } else if (response.status === 401) {
+		// 	setErrorMessage("Unathorized");
+		// } else {
+		// 	setErrorMessage("Login failed!");
+		// }
 	}
 
 	return (
 		<>
 			{success ? (
-				<a href="">HomePage</a>
+				navigate("/main")
 			) : (
 				<section>
 					<p ref={errRef}>{errorMessage}</p>
