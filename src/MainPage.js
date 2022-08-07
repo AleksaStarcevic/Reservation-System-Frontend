@@ -10,6 +10,8 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./App.css";
+import DataTable from "./DataTable";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -23,31 +25,20 @@ const localizer = dateFnsLocalizer({
 	locales,
 });
 
-const events = [
-	{
-		title: "Big Meeting",
-		allDay: true,
-		start: new Date(2022, 7, 1),
-		end: new Date(2022, 7, 3),
-	},
-	{
-		title: "Vacation",
-		desc: "aaaa",
-		start: new Date(2022, 7, 7),
-		end: new Date(2022, 7, 10),
-	},
-	{
-		title: "Conference",
-		start: new Date(2022, 7, 20),
-		end: new Date(2022, 7, 23),
-	},
-];
-
 function MainPage() {
 	const { auth } = useContext(AuthContext);
 
 	const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
-	const [allEvents, setAllEvents] = useState(events);
+	const [newFormEvent, setNewFormEvent] = useState({
+		title: "",
+		desc: "",
+		date: "",
+		start: "",
+		end: "",
+		attendies: "",
+		classroom: "",
+	});
+	const [allEvents, setAllEvents] = useState([]);
 	const [classroomTypes, setClassroomTypes] = useState([]);
 
 	function handleAddEvent() {
@@ -70,8 +61,6 @@ function MainPage() {
 				});
 
 				setClassroomTypes(resourceMap);
-
-				console.log(resourceMap);
 			} catch (err) {
 				console.log("ERROR!!!" + err); // not in 200
 			}
@@ -93,14 +82,14 @@ function MainPage() {
 
 					newAr.push({
 						id: el.id,
-						start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, el.end_timeInHours, 0, 0),
+						start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, 0, 0),
+						end: new Date(dates[0], dates[1] - 1, dates[2], el.end_timeInHours, 0, 0),
 						title: el.name,
+						resourceId: el.classroom.id,
 					});
 				});
 
-				console.log(newAr);
-
-				setAllEvents();
+				setAllEvents(newAr);
 			} catch (err) {
 				console.log("ERROR!!!" + err); // not in 200
 			}
@@ -112,27 +101,58 @@ function MainPage() {
 
 	return (
 		<div>
-			<h1>Calendar</h1>
-			<h2>Add event</h2>
-			<div>
+			{/* Ovaj div u novu komponentu */}
+			<div className="laga">
+				<div className="dugmad">
+					<button>Dodaj dogadjaj</button>
+					<button>Rezervisi dogadjaj</button>
+				</div>
+
 				<input
 					type="text"
 					placeholder="Add Title"
 					style={{ width: "20%", marginRight: "10px" }}
-					value={newEvent.title}
-					onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
+					value={newFormEvent.title}
+					onChange={e => setNewFormEvent({ ...newFormEvent, title: e.target.value })}
 				/>
+				<input
+					type="text"
+					placeholder="Add Desc"
+					style={{ width: "20%", marginRight: "10px" }}
+					value={newFormEvent.desc}
+					onChange={e => setNewFormEvent({ ...newFormEvent, desc: e.target.value })}
+				/>
+				<input
+					type="time"
+					placeholder="Add start time"
+					style={{ width: "20%", marginRight: "10px" }}
+					value={newFormEvent.start}
+					onChange={e => setNewFormEvent({ ...newFormEvent, start: e.target.value })}
+				/>
+				<input
+					type="time"
+					placeholder="Add end time"
+					style={{ width: "20%", marginRight: "10px" }}
+					value={newFormEvent.end}
+					onChange={e => setNewFormEvent({ ...newFormEvent, end: e.target.value })}
+				/>
+
 				<DatePicker
-					placeholderText="Start Date"
+					className="datepick"
+					placeholderText="Date"
 					style={{ marginRight: "10px" }}
-					selected={newEvent.start}
-					onChange={start => setNewEvent({ ...newEvent, start })}
+					selected={newFormEvent.date}
+					onChange={date => setNewFormEvent({ ...newFormEvent, date })}
 				/>
-				<DatePicker
-					placeholderText="End Date"
-					selected={newEvent.end}
-					onChange={end => setNewEvent({ ...newEvent, end })}
+				<input
+					type="number"
+					placeholder="Add number of attendies"
+					style={{ width: "20%", marginRight: "10px" }}
+					value={newFormEvent.attendies}
+					onChange={e => setNewFormEvent({ ...newFormEvent, attendies: e.target.value })}
 				/>
+				<DataTable />
+				{console.log(newFormEvent)}
 				<button stlye={{ marginTop: "10px" }} onClick={handleAddEvent}>
 					Add Event
 				</button>
@@ -142,7 +162,7 @@ function MainPage() {
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 500, margin: "50px" }}
+				style={{ height: 1200, margin: "50px" }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"
