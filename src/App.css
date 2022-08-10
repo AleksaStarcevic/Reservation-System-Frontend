@@ -9,7 +9,7 @@
 
 
 
-.laga input {
+.laga input,select {
     margin-bottom: 7px;
     padding: 10px 15px;
     border-radius: 4px;
@@ -25,6 +25,8 @@
 .dugmad {
     margin-bottom: 6px;
 }
+
+
 
 
 

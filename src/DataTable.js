@@ -7,10 +7,10 @@ export default function DataTable() {
 	const { auth } = useContext(AuthContext);
 
 	const columns = [
-		{ field: "id", headerName: "Classroom", width: 130 },
-		{ field: "name", headerName: "Name", width: 130 },
-		{ field: "capacity", headerName: "Capacity", width: 130 },
-		{ field: "type", headerName: "Type", width: 130 },
+		{ field: "id", headerName: "Classroom", width: 120 },
+		{ field: "name", headerName: "Name", width: 120 },
+		{ field: "capacity", headerName: "Capacity", width: 120 },
+		{ field: "type", headerName: "Type", width: 120 },
 	];
 
 	const [rows, setRows] = useState([]);
@@ -31,7 +31,7 @@ export default function DataTable() {
 	}, []);
 
 	return (
-		<div style={{ height: 400, width: "100%" }}>
+		<div style={{ height: 300, width: "30%" }}>
 			<DataGrid rows={rows} columns={columns} pageSize={5} rowsPerPageOptions={[5]} checkboxSelection />
 		</div>
 	);
