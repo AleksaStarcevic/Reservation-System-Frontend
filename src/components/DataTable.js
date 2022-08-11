@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import AuthContext from "./context/AuthProvider";
-import axios from "./api/axios";
+import AuthContext from "../context/AuthProvider";
+import axios from "../api/axios";
 
 export default function DataTable() {
 	const { auth } = useContext(AuthContext);

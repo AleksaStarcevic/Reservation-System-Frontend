@@ -11,8 +11,6 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
-import DataTable from "./DataTable";
-import BasicTable from "./BasicTable";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -24,6 +22,7 @@ import Paper from "@mui/material/Paper";
 import { Checkbox } from "@mui/material";
 import Select from "react-select";
 import PopUp from "./components/PopUp";
+import BasicTable from "./components/BasicTable";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -40,7 +39,6 @@ const localizer = dateFnsLocalizer({
 function MainPage() {
 	const { auth } = useContext(AuthContext);
 
-	const [selectedOption, setSelectedOption] = useState("");
 	const [newFormEvent, setNewFormEvent] = useState({
 		title: "",
 		desc: "",
@@ -52,20 +50,27 @@ function MainPage() {
 		type: "",
 		classroom: {
 			id: "",
+			name: "",
 			selected: "", // classroom kao niz idjeva ne treba mi slected na osnovu selecteda izvlacim idjeve
 		}, // ovo kao niz da uzmem sve ucionice
 	});
+
 	const [allEvents, setAllEvents] = useState([]);
 	const [classroomTypes, setClassroomTypes] = useState([]);
-
-	const [rows, setRows] = useState([]);
-	// const [selected, setSelected] = useState({ id: "", selected: "" });
 	const [appointmentTypes, setAppointmentTypes] = useState([]);
+
+	//Tabela
+	const [rows, setRows] = useState([]);
+	const [selectedOption, setSelectedOption] = useState("");
+
+	// const [selected, setSelected] = useState({ id: "", selected: "" });
 
 	const [appointmentsToReserve, setAppointmentsToReserve] = useState([]);
 	const [openPopup, setOpenPopup] = useState(false);
 
 	useEffect(() => {
+		console.log("IN useEffect!");
+
 		const fetchClassroomTypes = async () => {
 			try {
 				let response = await axios.get(`common/classroom/names`, {
@@ -82,7 +87,7 @@ function MainPage() {
 
 				setClassroomTypes(resourceMap);
 			} catch (err) {
-				console.log("ERROR!!!" + err); // not in 200
+				console.log(err);
 			}
 		};
 
@@ -111,7 +116,7 @@ function MainPage() {
 
 				setAllEvents(newAr);
 			} catch (err) {
-				console.log("ERROR!!!" + err); // not in 200
+				console.log(err);
 			}
 		};
 
@@ -122,7 +127,7 @@ function MainPage() {
 				});
 				setRows(response.data);
 			} catch (err) {
-				console.log("ERROR!!!" + err); // not in 200
+				console.log(err);
 			}
 		};
 
@@ -138,7 +143,7 @@ function MainPage() {
 
 				setAppointmentTypes(ar);
 			} catch (err) {
-				console.log("ERROR!!!" + err); // not in 200
+				console.log(err);
 			}
 		};
 
@@ -148,30 +153,44 @@ function MainPage() {
 		fetchAppointmentTypes();
 	}, []);
 
-	console.log(newFormEvent);
+	// console.log(newFormEvent);
 
-	async function handleAddEvent() {
-		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
-		let arr = [];
-		arr.push(newFormEvent);
-		// setAllEvents([...allEvents, newFormEvent]); // dodam u niz novi form event
-		setAppointmentsToReserve();
-
+	async function handleReserve() {
+		// setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
+		// // setAllEvents([...allEvents, newFormEvent]); // dodam u niz novi form event
+		// setAppointmentsToReserve([...appointmentsToReserve, newFormEvent]);
 		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
-		const arrayOfBojects = [
-			{
+		// const arrayOfBojects = [
+		// 	{
+		// 		email: auth.email,
+		// 		classroomId: newFormEvent.classroom.id,
+		// 		name: newFormEvent.title,
+		// 		date: dateFormated,
+		// 		decription: newFormEvent.desc,
+		// 		reason: newFormEvent.reason,
+		// 		number_of_attendies: parseInt(newFormEvent.attendies),
+		// 		start_timeInHours: parseInt(newFormEvent.start),
+		// 		end_timeInHours: parseInt(newFormEvent.end),
+		// 		type: selectedOption.value,
+		// 	},
+		// ];
+		const arrayOfBojects = appointmentsToReserve.map(el => {
+			return {
 				email: auth.email,
-				classroomId: newFormEvent.classroom.id,
-				name: newFormEvent.title,
+				classroomId: el.classroom.id,
+				name: el.title,
 				date: dateFormated,
-				decription: newFormEvent.desc,
-				reason: newFormEvent.reason,
-				number_of_attendies: parseInt(newFormEvent.attendies),
-				start_timeInHours: parseInt(newFormEvent.start),
-				end_timeInHours: parseInt(newFormEvent.end),
-				type: selectedOption.value,
-			},
-		];
+				decription: el.desc,
+				reason: el.reason,
+				number_of_attendies: parseInt(el.attendies),
+				start_timeInHours: parseInt(el.start),
+				end_timeInHours: parseInt(el.end),
+				type: el.type,
+			};
+		});
+
+		console.log(`BOHECTSL`);
+		console.log(arrayOfBojects);
 
 		try {
 			let response = await axios.post(`appointment/reserve`, arrayOfBojects, {
@@ -182,6 +201,37 @@ function MainPage() {
 			console.log(err); // not in 200
 		}
 	}
+
+	const isClassroomAvailableForDate = async () => {
+		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
+		const obj = {
+			date: dateFormated,
+			classroomId: newFormEvent.classroom.id,
+			start_timeInHours: parseInt(newFormEvent.start),
+			end_timeInHours: parseInt(newFormEvent.end),
+		};
+
+		try {
+			let response = await axios.post(`appointment/available`, obj, {
+				headers: { Authorization: `Bearer ${auth.token}` },
+			});
+			console.log(`Unutar fje`, response.data);
+			setAppointmentsToReserve([...appointmentsToReserve, { ...newFormEvent, available: response.data }]);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	function handleAddingAppointments(e) {
+		e.preventDefault();
+		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
+
+		//saljem zahtev da li je slobodna sala u to vreme za uneti termin
+		// dobijem boolean i onda setIsClassroomFree na false to posaljem kao props do tabelel i onda prikazem X
+		isClassroomAvailableForDate();
+	}
+
+	console.log(appointmentsToReserve);
 
 	return (
 		<div>
@@ -258,7 +308,7 @@ function MainPage() {
 					/>
 
 					{/* TABLE */}
-					<TableContainer component={Paper}>
+					<TableContainer>
 						<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 							<TableHead>
 								<TableRow>
@@ -276,7 +326,10 @@ function MainPage() {
 											<Checkbox
 												onChange={e => {
 													// setSelected({ id: row.id, selected: e.target.checked });
-													setNewFormEvent({ ...newFormEvent, classroom: { id: row.id, selected: e.target.checked } });
+													setNewFormEvent({
+														...newFormEvent,
+														classroom: { id: row.id, name: row.name, selected: e.target.checked },
+													});
 												}}
 											/>
 										</TableCell>
@@ -292,12 +345,12 @@ function MainPage() {
 							</TableBody>
 						</Table>
 					</TableContainer>
-					<button stlye={{ marginTop: "10px" }} onClick={handleAddEvent}>
+					<button stlye={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
 						Add Event
 					</button>
+					{/* Tabela gde punim dodate termine  */}
+					<BasicTable rows={appointmentsToReserve} />
 				</PopUp>
-
-				{/* <BasicTable selectedId={newFormEvent.classroom} /> */}
 			</div>
 			<Calendar
 				localizer={localizer}
