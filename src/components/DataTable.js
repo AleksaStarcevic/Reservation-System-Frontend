@@ -1,38 +1,52 @@
-import React, { useContext, useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import AuthContext from "../context/AuthProvider";
-import axios from "../api/axios";
-
-export default function DataTable() {
-	const { auth } = useContext(AuthContext);
-
-	const columns = [
-		{ field: "id", headerName: "Classroom", width: 120 },
-		{ field: "name", headerName: "Name", width: 120 },
-		{ field: "capacity", headerName: "Capacity", width: 120 },
-		{ field: "type", headerName: "Type", width: 120 },
-	];
-
-	const [rows, setRows] = useState([]);
-
-	useEffect(() => {
-		const fetchClassroomNameTypeAttendies = async () => {
-			try {
-				let response = await axios.get(`classroom/table`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
-				});
-				setRows(response.data);
-			} catch (err) {
-				console.log("ERROR!!!" + err); // not in 200
-			}
-		};
-
-		fetchClassroomNameTypeAttendies();
-	}, []);
+import React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Checkbox } from "@mui/material";
+export default function DataTable(props) {
+	const { rows, setNewFormEvent, newFormEvent } = props;
 
 	return (
-		<div style={{ height: 300, width: "30%" }}>
-			<DataGrid rows={rows} columns={columns} pageSize={5} rowsPerPageOptions={[5]} checkboxSelection />
-		</div>
+		<TableContainer>
+			<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
+				<TableHead>
+					<TableRow>
+						<TableCell></TableCell>
+						<TableCell>Classroom</TableCell>
+						<TableCell align="right">Name</TableCell>
+						<TableCell align="right">Capacity</TableCell>
+						<TableCell align="right">Type</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{rows.map(row => (
+						<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+							<TableCell>
+								<Checkbox
+									onChange={e => {
+										// setSelected({ id: row.id, selected: e.target.checked });
+										setNewFormEvent({
+											...newFormEvent,
+											classroom: { id: row.id, name: row.name, selected: e.target.checked },
+										});
+									}}
+								/>
+							</TableCell>
+
+							<TableCell component="th" scope="row">
+								{row.id}
+							</TableCell>
+							<TableCell align="right">{row.name}</TableCell>
+							<TableCell align="right">{row.capacity}</TableCell>
+							<TableCell align="right">{row.type}</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+		</TableContainer>
 	);
 }

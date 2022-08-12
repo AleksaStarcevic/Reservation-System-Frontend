@@ -23,6 +23,8 @@ import { Checkbox } from "@mui/material";
 import Select from "react-select";
 import PopUp from "./components/PopUp";
 import BasicTable from "./components/BasicTable";
+import DataTable from "./components/DataTable";
+import { set } from "date-fns";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -39,7 +41,8 @@ const localizer = dateFnsLocalizer({
 function MainPage() {
 	const { auth } = useContext(AuthContext);
 
-	const [newFormEvent, setNewFormEvent] = useState({
+	let startObject = {
+		id: Math.floor(Math.random() * 10000),
 		title: "",
 		desc: "",
 		reason: "",
@@ -53,7 +56,9 @@ function MainPage() {
 			name: "",
 			selected: "", // classroom kao niz idjeva ne treba mi slected na osnovu selecteda izvlacim idjeve
 		}, // ovo kao niz da uzmem sve ucionice
-	});
+	};
+
+	const [newFormEvent, setNewFormEvent] = useState(startObject);
 
 	const [allEvents, setAllEvents] = useState([]);
 	const [classroomTypes, setClassroomTypes] = useState([]);
@@ -67,6 +72,8 @@ function MainPage() {
 
 	const [appointmentsToReserve, setAppointmentsToReserve] = useState([]);
 	const [openPopup, setOpenPopup] = useState(false);
+	const [filledData, setFilledData] = useState({});
+	const [editButton, setEditButton] = useState(false);
 
 	useEffect(() => {
 		console.log("IN useEffect!");
@@ -202,6 +209,39 @@ function MainPage() {
 		}
 	}
 
+	function checkForDuplicateEntry() {
+		if (appointmentsToReserve.length === 0) {
+			return false;
+		}
+
+		if (appointmentsToReserve.length === 1) {
+			if (
+				appointmentsToReserve[0].date === newFormEvent.date &&
+				appointmentsToReserve[0].start === newFormEvent.start &&
+				appointmentsToReserve[0].end === newFormEvent.end &&
+				appointmentsToReserve[0].classroom.name === newFormEvent.classroom.name
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		console.log("before", appointmentsToReserve);
+
+		for (let i = 0; i < appointmentsToReserve.length; i++) {
+			// for (let j = 1; j < appointmentsToReserve.length; j++) {
+			if (
+				appointmentsToReserve[i].date === newFormEvent.date &&
+				appointmentsToReserve[i].start === newFormEvent.start &&
+				appointmentsToReserve[i].end === newFormEvent.end &&
+				appointmentsToReserve[i].classroom.name === newFormEvent.classroom.name
+			) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	const isClassroomAvailableForDate = async () => {
 		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
 		const obj = {
@@ -215,8 +255,16 @@ function MainPage() {
 			let response = await axios.post(`appointment/available`, obj, {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
-			console.log(`Unutar fje`, response.data);
-			setAppointmentsToReserve([...appointmentsToReserve, { ...newFormEvent, available: response.data }]);
+			const entry = checkForDuplicateEntry();
+			console.log(entry);
+			if (entry === false) {
+				setAppointmentsToReserve([
+					...appointmentsToReserve,
+					{ ...newFormEvent, available: response.data, id: Math.floor(Math.random() * 10000) },
+				]);
+			}
+
+			// console.log("avail", newFormEvent);
 		} catch (err) {
 			console.log(err);
 		}
@@ -225,24 +273,39 @@ function MainPage() {
 	function handleAddingAppointments(e) {
 		e.preventDefault();
 		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
+		//saljem zahtev da li je slobodna sala u to vreme za uneti termin
+		// dobijem boolean i onda setIsClassroomFree na false to posaljem kao props do tabelel i onda prikazem X
+		isClassroomAvailableForDate();
+		// setNewFormEvent(startObject);
+	}
+
+	function handleEditAppointment(e) {
+		e.preventDefault();
+
+		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
 
 		//saljem zahtev da li je slobodna sala u to vreme za uneti termin
 		// dobijem boolean i onda setIsClassroomFree na false to posaljem kao props do tabelel i onda prikazem X
 		isClassroomAvailableForDate();
+		setEditButton(false);
+		// setNewFormEvent(startObject);
 	}
 
-	console.log(appointmentsToReserve);
+	console.log("After render", newFormEvent);
+	console.log("AFter render", appointmentsToReserve);
 
 	return (
 		<div>
 			{/* Ovaj div u novu komponentu */}
-			<div className="laga">
+			<div className="aa">
 				<div className="dugmad">
 					<button onClick={() => setOpenPopup(true)}>Dodaj dogadjaj</button>
 					<button>Rezervisi dogadjaj</button>
 				</div>
+			</div>
 
-				<PopUp title="Add appointment" openPopup={openPopup} setOpenPopup={setOpenPopup}>
+			<PopUp title="Add appointment" openPopup={openPopup} setOpenPopup={setOpenPopup}>
+				<div className="laga">
 					<input
 						type="text"
 						placeholder="Add Title"
@@ -308,50 +371,33 @@ function MainPage() {
 					/>
 
 					{/* TABLE */}
-					<TableContainer>
-						<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
-							<TableHead>
-								<TableRow>
-									<TableCell></TableCell>
-									<TableCell>Classroom</TableCell>
-									<TableCell align="right">Name</TableCell>
-									<TableCell align="right">Capacity</TableCell>
-									<TableCell align="right">Type</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{rows.map(row => (
-									<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-										<TableCell>
-											<Checkbox
-												onChange={e => {
-													// setSelected({ id: row.id, selected: e.target.checked });
-													setNewFormEvent({
-														...newFormEvent,
-														classroom: { id: row.id, name: row.name, selected: e.target.checked },
-													});
-												}}
-											/>
-										</TableCell>
+					<DataTable rows={rows} setNewFormEvent={setNewFormEvent} newFormEvent={newFormEvent} />
 
-										<TableCell component="th" scope="row">
-											{row.id}
-										</TableCell>
-										<TableCell align="right">{row.name}</TableCell>
-										<TableCell align="right">{row.capacity}</TableCell>
-										<TableCell align="right">{row.type}</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</TableContainer>
-					<button stlye={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
+					{editButton === true ? (
+						<button onClick={handleEditAppointment}>Edit event</button>
+					) : (
+						<button style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
+							Add event
+						</button>
+					)}
+					{/* <button  style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
 						Add Event
-					</button>
-					{/* Tabela gde punim dodate termine  */}
-					<BasicTable rows={appointmentsToReserve} />
-				</PopUp>
-			</div>
+					</button> */}
+				</div>
+				{/* Tabela gde punim dodate termine  */}
+				<div>
+					<BasicTable
+						rows={appointmentsToReserve}
+						setAppointmentsToReserve={setAppointmentsToReserve}
+						setNewFormEvent={setNewFormEvent}
+						setEditButton={setEditButton}
+						editButton={editButton}
+						newFormEvent={newFormEvent}
+						appointmentsToReserve={appointmentsToReserve}
+					/>
+				</div>
+			</PopUp>
+
 			<Calendar
 				localizer={localizer}
 				events={allEvents}

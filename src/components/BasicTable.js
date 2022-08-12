@@ -11,10 +11,80 @@ import moment from "moment";
 import { style } from "@mui/system";
 
 export default function BasicTable(props) {
-	const { rows } = props;
+	const {
+		rows,
+		setAppointmentsToReserve,
+		setNewFormEvent,
+		setEditButton,
+		editButton,
+		newFormEvent,
+		appointmentsToReserve,
+	} = props;
+
+	function handleDelete(id) {
+		// console.log("Before array update", rows);
+		console.log("Id:", id);
+		const updatedArray = rows.filter(el => el.id !== id);
+
+		console.log("After update", updatedArray);
+
+		setAppointmentsToReserve(updatedArray);
+	}
+
+	// function handleEdit(id) {
+	// 	let obj = {};
+	// 	rows.forEach(el => {
+	// 		if (el.id === id) {
+	// 			obj = el;
+	// 		}
+	// 	});
+	// 	handleDelete(id);
+	// 	console.log("Inside edit", obj);
+	// 	setNewFormEvent(obj);
+	// 	setEditButton(true);
+	// 	// treba da napravim dugme sacuvaj umesto Add i da ono red sa tim idejm updajeteuje
+	// 	// pronadjem u nizu objekat sa tim id i onda popunim fomru sa podacima preko propsa setPrefilledData
+	// 	// napravim const [prefilledData,setprefilledDATA]=usestate({});
+	// }
+
+	function checkAvailableReservations() {
+		let avail = "";
+		if (appointmentsToReserve.length === 0) {
+			return true; // disabled === true
+		} else {
+			appointmentsToReserve.forEach(el => {
+				if (el.available === false) {
+					avail = true;
+				}
+			});
+		}
+
+		if (avail) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function checkForDuplicateEntry() {
+		for (let i = 0; i < appointmentsToReserve.length; i++) {
+			for (let j = 1; i < appointmentsToReserve.length; j++) {
+				if (
+					appointmentsToReserve[i].date === appointmentsToReserve[j].date &&
+					appointmentsToReserve[i].start === appointmentsToReserve[j].start &&
+					appointmentsToReserve[i].end === appointmentsToReserve[j].end &&
+					appointmentsToReserve[i].classroom.name === appointmentsToReserve[j].classroom.name
+				) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 	return (
-		<TableContainer component={Paper}>
+		<TableContainer>
 			<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 				<TableHead>
 					<TableRow>
@@ -23,11 +93,13 @@ export default function BasicTable(props) {
 						<TableCell align="right">Classroom</TableCell>
 						<TableCell align="right">Date</TableCell>
 						<TableCell align="right">Time</TableCell>
+						<TableCell></TableCell>
+						<TableCell></TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{rows.map(row => (
-						<TableRow key={Math.floor(Math.random() * 1000)} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+						<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
 							<TableCell>
 								<button style={row.available === true ? { backgroundColor: "green" } : { backgroundColor: "red" }}>
 									X
@@ -40,10 +112,17 @@ export default function BasicTable(props) {
 							<TableCell align="right">
 								{row.start} - {row.end}
 							</TableCell>
+							<TableCell>
+								<button /*onClick={() => handleEdit(row.id)}*/>Izmeni</button>
+							</TableCell>
+							<TableCell>
+								<button onClick={() => handleDelete(row.id)}>Obrisi</button>
+							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
+			<button disabled={checkAvailableReservations()}>Posalji na odobravanje</button>
 		</TableContainer>
 	);
 }
