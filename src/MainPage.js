@@ -163,24 +163,8 @@ function MainPage() {
 	// console.log(newFormEvent);
 
 	async function handleReserve() {
-		// setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
-		// // setAllEvents([...allEvents, newFormEvent]); // dodam u niz novi form event
-		// setAppointmentsToReserve([...appointmentsToReserve, newFormEvent]);
 		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
-		// const arrayOfBojects = [
-		// 	{
-		// 		email: auth.email,
-		// 		classroomId: newFormEvent.classroom.id,
-		// 		name: newFormEvent.title,
-		// 		date: dateFormated,
-		// 		decription: newFormEvent.desc,
-		// 		reason: newFormEvent.reason,
-		// 		number_of_attendies: parseInt(newFormEvent.attendies),
-		// 		start_timeInHours: parseInt(newFormEvent.start),
-		// 		end_timeInHours: parseInt(newFormEvent.end),
-		// 		type: selectedOption.value,
-		// 	},
-		// ];
+
 		const arrayOfBojects = appointmentsToReserve.map(el => {
 			return {
 				email: auth.email,
@@ -203,38 +187,31 @@ function MainPage() {
 			let response = await axios.post(`appointment/reserve`, arrayOfBojects, {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
+
+			if (response.status === 200) {
+				alert("Uspesno rezervisani termini");
+			} else {
+				alert("Doslo je do greske");
+			}
 			console.log(response.data);
 		} catch (err) {
 			console.log(err); // not in 200
 		}
 	}
 
-	function checkForDuplicateEntry() {
-		if (appointmentsToReserve.length === 0) {
-			return false;
-		}
-
-		if (appointmentsToReserve.length === 1) {
-			if (
-				appointmentsToReserve[0].date === newFormEvent.date &&
-				appointmentsToReserve[0].start === newFormEvent.start &&
-				appointmentsToReserve[0].end === newFormEvent.end &&
-				appointmentsToReserve[0].classroom.name === newFormEvent.classroom.name
-			) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		console.log("before", appointmentsToReserve);
-
+	function checkForReserveConflict() {
 		for (let i = 0; i < appointmentsToReserve.length; i++) {
-			// for (let j = 1; j < appointmentsToReserve.length; j++) {
 			if (
 				appointmentsToReserve[i].date === newFormEvent.date &&
-				appointmentsToReserve[i].start === newFormEvent.start &&
-				appointmentsToReserve[i].end === newFormEvent.end &&
-				appointmentsToReserve[i].classroom.name === newFormEvent.classroom.name
+				appointmentsToReserve[i].classroom.name === newFormEvent.classroom.name &&
+				((appointmentsToReserve[i].start <= newFormEvent.start && appointmentsToReserve[i].end >= newFormEvent.end) ||
+					(appointmentsToReserve[i].start >= newFormEvent.start &&
+						appointmentsToReserve[i].start < newFormEvent.end &&
+						appointmentsToReserve[i].end >= newFormEvent.end) ||
+					(appointmentsToReserve[i].start <= newFormEvent.start &&
+						appointmentsToReserve[i].end > newFormEvent.start &&
+						appointmentsToReserve[i].end <= newFormEvent.end) ||
+					(appointmentsToReserve[i].start >= newFormEvent.start && appointmentsToReserve[i].end <= newFormEvent.end))
 			) {
 				return true;
 			}
@@ -255,13 +232,16 @@ function MainPage() {
 			let response = await axios.post(`appointment/available`, obj, {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
-			const entry = checkForDuplicateEntry();
+			const entry = checkForReserveConflict();
 			console.log(entry);
-			if (entry === false) {
+
+			if (response.data === true && entry === false) {
 				setAppointmentsToReserve([
 					...appointmentsToReserve,
 					{ ...newFormEvent, available: response.data, id: Math.floor(Math.random() * 10000) },
 				]);
+			} else {
+				console.log(`Appointment in selected classroom is reserved`);
 			}
 
 			// console.log("avail", newFormEvent);
@@ -394,6 +374,7 @@ function MainPage() {
 						editButton={editButton}
 						newFormEvent={newFormEvent}
 						appointmentsToReserve={appointmentsToReserve}
+						handleReserve={handleReserve}
 					/>
 				</div>
 			</PopUp>

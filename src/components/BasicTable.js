@@ -19,6 +19,7 @@ export default function BasicTable(props) {
 		editButton,
 		newFormEvent,
 		appointmentsToReserve,
+		handleReserve,
 	} = props;
 
 	function handleDelete(id) {
@@ -48,39 +49,9 @@ export default function BasicTable(props) {
 	// }
 
 	function checkAvailableReservations() {
-		let avail = "";
 		if (appointmentsToReserve.length === 0) {
 			return true; // disabled === true
-		} else {
-			appointmentsToReserve.forEach(el => {
-				if (el.available === false) {
-					avail = true;
-				}
-			});
 		}
-
-		if (avail) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function checkForDuplicateEntry() {
-		for (let i = 0; i < appointmentsToReserve.length; i++) {
-			for (let j = 1; i < appointmentsToReserve.length; j++) {
-				if (
-					appointmentsToReserve[i].date === appointmentsToReserve[j].date &&
-					appointmentsToReserve[i].start === appointmentsToReserve[j].start &&
-					appointmentsToReserve[i].end === appointmentsToReserve[j].end &&
-					appointmentsToReserve[i].classroom.name === appointmentsToReserve[j].classroom.name
-				) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	return (
@@ -88,7 +59,7 @@ export default function BasicTable(props) {
 			<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 				<TableHead>
 					<TableRow>
-						<TableCell></TableCell>
+						{/* <TableCell></TableCell> */}
 						<TableCell>Name</TableCell>
 						<TableCell align="right">Classroom</TableCell>
 						<TableCell align="right">Date</TableCell>
@@ -100,11 +71,13 @@ export default function BasicTable(props) {
 				<TableBody>
 					{rows.map(row => (
 						<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-							<TableCell>
-								<button style={row.available === true ? { backgroundColor: "green" } : { backgroundColor: "red" }}>
-									X
-								</button>
-							</TableCell>
+							{/* <TableCell>
+								{row.available === true ? (
+									<button style={{ backgroundColor: "green" }}>✔</button>
+								) : (
+									<button style={{ backgroundColor: "red" }}>❌</button>
+								)}
+							</TableCell> */}
 							<TableCell align="right">{row.title}</TableCell>
 							<TableCell align="right">{row.classroom.name}</TableCell>
 
@@ -122,7 +95,9 @@ export default function BasicTable(props) {
 					))}
 				</TableBody>
 			</Table>
-			<button disabled={checkAvailableReservations()}>Posalji na odobravanje</button>
+			<button onClick={() => handleReserve()} disabled={checkAvailableReservations()}>
+				Posalji na odobravanje
+			</button>
 		</TableContainer>
 	);
 }
