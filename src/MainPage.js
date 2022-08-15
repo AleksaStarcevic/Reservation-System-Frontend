@@ -72,8 +72,10 @@ function MainPage() {
 
 	const [appointmentsToReserve, setAppointmentsToReserve] = useState([]);
 	const [openPopup, setOpenPopup] = useState(false);
-	const [filledData, setFilledData] = useState({});
+	const [dataChanged, setDataChanged] = useState(false);
 	const [editButton, setEditButton] = useState(false);
+
+	console.log(auth);
 
 	useEffect(() => {
 		console.log("IN useEffect!");
@@ -92,6 +94,8 @@ function MainPage() {
 					});
 				});
 
+				console.log(resourceMap);
+
 				setClassroomTypes(resourceMap);
 			} catch (err) {
 				console.log(err);
@@ -99,6 +103,7 @@ function MainPage() {
 		};
 
 		const fetchAppointments = async () => {
+			// ovde treba samo oni koji su accepted
 			try {
 				// var date1 = new Date("2022, 06, 22");
 				// var dateFormat = moment(date1).format("YYYY-MM-DD");
@@ -109,6 +114,7 @@ function MainPage() {
 				const appointments = response.data;
 				const newAr = [];
 				// transformacija niza iz baze u niz za prikaz
+				// if (appointmentsToReserve.length === 0) {
 				appointments.forEach(el => {
 					const dates = el.date.split("-");
 
@@ -120,6 +126,7 @@ function MainPage() {
 						resourceId: el.classroom.id,
 					});
 				});
+				// }
 
 				setAllEvents(newAr);
 			} catch (err) {
@@ -143,10 +150,13 @@ function MainPage() {
 				let response = await axios.get(`common/appointment/types`, {
 					headers: { Authorization: `Bearer ${auth.token}` },
 				});
+				let ar;
+				// if (!response.data.length) {
 
-				const ar = response.data.map(el => {
+				ar = response.data.map(el => {
 					return { label: el.name, value: el.id };
 				});
+				// }
 
 				setAppointmentTypes(ar);
 			} catch (err) {
@@ -240,7 +250,9 @@ function MainPage() {
 					...appointmentsToReserve,
 					{ ...newFormEvent, available: response.data, id: Math.floor(Math.random() * 10000) },
 				]);
+				setDataChanged(true);
 			} else {
+				// setNewFormEvent(newFormEvent);
 				console.log(`Appointment in selected classroom is reserved`);
 			}
 
@@ -384,7 +396,7 @@ function MainPage() {
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 1200, margin: "50px" }}
+				style={{ height: 1200, marginLeft: "250px" }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"
