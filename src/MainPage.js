@@ -115,16 +115,18 @@ function MainPage() {
 				const newAr = [];
 				// transformacija niza iz baze u niz za prikaz
 				// if (appointmentsToReserve.length === 0) {
+
 				appointments.forEach(el => {
 					const dates = el.date.split("-");
-
-					newAr.push({
-						id: el.id,
-						start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, 0, 0),
-						end: new Date(dates[0], dates[1] - 1, dates[2], el.end_timeInHours, 0, 0),
-						title: el.name,
-						resourceId: el.classroom.id,
-					});
+					if (el.status.id === 1) {
+						newAr.push({
+							id: el.id,
+							start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, 0, 0),
+							end: new Date(dates[0], dates[1] - 1, dates[2], el.end_timeInHours, 0, 0),
+							title: el.name,
+							resourceId: el.classroom.id,
+						});
+					}
 				});
 				// }
 
@@ -396,7 +398,7 @@ function MainPage() {
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 1200, marginLeft: "250px" }}
+				style={{ height: 1200, marginLeft: "230px" }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"

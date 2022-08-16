@@ -13,7 +13,7 @@ body {
 
 .Sidebar {
     height: 100%;
-    width: 250px;
+    width: 230px;
     background-color: #2F4050;
    
 }
@@ -35,6 +35,14 @@ body {
     justify-content: center;
     align-items: center;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.numOfRequests{
+    background-color: red;
+    border-radius: 5px;
+    padding: 2px 2px;
+    /* position: absolute; */
+    /* right: 5px; */
 }
 
 .row #icon {

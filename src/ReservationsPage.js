@@ -39,7 +39,6 @@ function ReservationsPage() {
 				return (
 					<div className="card_item" key={el.id}>
 						<div className="card_inner">
-							{console.log(el.image)}
 							<img src={el.image} alt="" />
 							<div className="userName">{`${el.firstName} ${el.lastName}`}</div>
 							<div className="userUrl">{el.type}</div>
