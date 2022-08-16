@@ -5,7 +5,6 @@ import axios from "./api/axios";
 function AccountPage() {
 	const { auth } = useContext(AuthContext);
 
-	console.log(auth);
 	return <div>AccountPage</div>;
 }
 

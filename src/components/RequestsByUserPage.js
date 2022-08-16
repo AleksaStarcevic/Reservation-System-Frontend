@@ -14,7 +14,7 @@ function RequestsByUserPage() {
 	const { id } = useParams();
 	const { auth } = useContext(AuthContext);
 	const [rows, setRows] = useState([]);
-	const [change, setChange] = useState(false);
+	const [dataChanged, setDataChanged] = useState(false);
 
 	useEffect(() => {
 		const fetchPendingAppointmentsForUser = async () => {
@@ -30,7 +30,7 @@ function RequestsByUserPage() {
 		};
 
 		fetchPendingAppointmentsForUser();
-	}, [change]);
+	}, [dataChanged]);
 
 	async function handleAccept(id) {
 		try {
@@ -44,7 +44,7 @@ function RequestsByUserPage() {
 
 			if (response.status === 200) {
 				alert("Uspesno odobren termin");
-				setChange(true);
+				setDataChanged(prev => !prev);
 			} else {
 				alert("Doslo je do greske");
 			}
@@ -65,7 +65,7 @@ function RequestsByUserPage() {
 
 			if (response.status === 200) {
 				alert("Appointment declined!");
-				setChange(true);
+				setDataChanged(prev => !prev);
 			} else {
 				alert("Doslo je do greske");
 			}
@@ -86,7 +86,7 @@ function RequestsByUserPage() {
 
 			if (response.status === 200) {
 				alert("All appointments accepted!");
-				setChange(true);
+				setDataChanged(prev => !prev);
 			} else {
 				alert("Doslo je do greske");
 			}
@@ -134,9 +134,9 @@ function RequestsByUserPage() {
 							</TableRow>
 						))}
 					</TableBody>
-					<button onClick={() => handleAcceptAll()}>ACCEPT ALL</button>
 				</Table>
 			</TableContainer>
+			<button onClick={() => handleAcceptAll()}>ACCEPT ALL</button>
 		</div>
 	);
 }

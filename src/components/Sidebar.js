@@ -17,7 +17,7 @@ function Sidebar() {
 					responseType: "json",
 					headers: { Authorization: `Bearer ${auth.token}` },
 				});
-
+				console.log(response.data);
 				setUsers(response.data);
 			} catch (err) {
 				console.log(err);

@@ -50,7 +50,10 @@ function MainPage() {
 		start: "",
 		end: "",
 		attendies: "",
-		type: "",
+		type: {
+			label: "",
+			value: "",
+		},
 		classroom: {
 			id: "",
 			name: "",
@@ -66,16 +69,11 @@ function MainPage() {
 
 	//Tabela
 	const [rows, setRows] = useState([]);
-	const [selectedOption, setSelectedOption] = useState("");
-
-	// const [selected, setSelected] = useState({ id: "", selected: "" });
 
 	const [appointmentsToReserve, setAppointmentsToReserve] = useState([]);
 	const [openPopup, setOpenPopup] = useState(false);
 	const [dataChanged, setDataChanged] = useState(false);
 	const [editButton, setEditButton] = useState(false);
-
-	console.log(auth);
 
 	useEffect(() => {
 		console.log("IN useEffect!");
@@ -170,7 +168,7 @@ function MainPage() {
 		fetchAppointments();
 		fetchClassroomNameTypeAttendies();
 		fetchAppointmentTypes();
-	}, []);
+	}, [openPopup]);
 
 	// console.log(newFormEvent);
 
@@ -205,10 +203,11 @@ function MainPage() {
 			} else {
 				alert("Doslo je do greske");
 			}
-			console.log(response.data);
 		} catch (err) {
 			console.log(err); // not in 200
 		}
+		setAppointmentsToReserve([]);
+		setNewFormEvent(startObject);
 	}
 
 	function checkForReserveConflict() {
@@ -252,7 +251,7 @@ function MainPage() {
 					...appointmentsToReserve,
 					{ ...newFormEvent, available: response.data, id: Math.floor(Math.random() * 10000) },
 				]);
-				setDataChanged(true);
+				// setDataChanged(true);
 			} else {
 				// setNewFormEvent(newFormEvent);
 				console.log(`Appointment in selected classroom is reserved`);
@@ -266,26 +265,22 @@ function MainPage() {
 
 	function handleAddingAppointments(e) {
 		e.preventDefault();
-		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
-		//saljem zahtev da li je slobodna sala u to vreme za uneti termin
-		// dobijem boolean i onda setIsClassroomFree na false to posaljem kao props do tabelel i onda prikazem X
+
 		isClassroomAvailableForDate();
 		// setNewFormEvent(startObject);
+		// resetuj niz, formu i tabelu
+		setAppointmentsToReserve([]);
 	}
 
 	function handleEditAppointment(e) {
 		e.preventDefault();
 
-		setNewFormEvent({ ...newFormEvent, type: selectedOption.value });
-
-		//saljem zahtev da li je slobodna sala u to vreme za uneti termin
-		// dobijem boolean i onda setIsClassroomFree na false to posaljem kao props do tabelel i onda prikazem X
 		isClassroomAvailableForDate();
 		setEditButton(false);
 		// setNewFormEvent(startObject);
 	}
 
-	console.log("After render", newFormEvent);
+	// console.log("After render", newFormEvent);
 	console.log("AFter render", appointmentsToReserve);
 
 	return (
@@ -294,7 +289,6 @@ function MainPage() {
 			<div className="aa">
 				<div className="dugmad">
 					<button onClick={() => setOpenPopup(true)}>Dodaj dogadjaj</button>
-					<button>Rezervisi dogadjaj</button>
 				</div>
 			</div>
 
@@ -328,8 +322,8 @@ function MainPage() {
 					placeholder="Select appointment type"
 				</select> */}
 					<Select
-						value={selectedOption}
-						onChange={setSelectedOption}
+						value={newFormEvent.type.label}
+						onChange={e => setNewFormEvent({ ...newFormEvent, type: e.value })}
 						options={appointmentTypes}
 						placeholder="Add appointment type"
 					/>

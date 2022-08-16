@@ -7,19 +7,21 @@ import Sidebar from "./components/Sidebar";
 import ReservationsPage from "./ReservationsPage";
 import AccountPage from "./AccountPage";
 import RequestsByUserPage from "./components/RequestsByUserPage";
+import SidebarLayout from "./components/SidebarLayout";
 function App() {
 	return (
 		<>
-			<Sidebar></Sidebar>
 			<Routes>
 				<Route path="/signup" element={<SignUp />} />
 				<Route path="/" element={<Login />} />
-				<Route path="/main" element={<MainPage />} />
-				<Route path="/user/reservations" element={<ReservationsPage />} />
 
-				<Route path="/account" element={<AccountPage />} />
-				<Route path="/user/reservations/pending/:id" element={<RequestsByUserPage />} />
-				<Route path="*" element={<ErrorPage />} />
+				<Route element={<SidebarLayout />}>
+					<Route path="/main" element={<MainPage />} />
+					<Route path="/user/reservations" element={<ReservationsPage />} />
+					<Route path="/account" element={<AccountPage />} />
+					<Route path="/user/reservations/pending/:id" element={<RequestsByUserPage />} />
+					<Route path="*" element={<ErrorPage />} />
+				</Route>
 			</Routes>
 		</>
 	);
