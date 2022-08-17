@@ -6,8 +6,9 @@ function PopUp(props) {
 	return (
 		<Dialog
 			open={openPopup}
-			fullScreen={true}
-			style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+			// fullScreen={true}
+			maxWidth={"md"}
+			fullWidth={true}
 		>
 			<DialogTitle>
 				<div style={{ display: "flex" }}>

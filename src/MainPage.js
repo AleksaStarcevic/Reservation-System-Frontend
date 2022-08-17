@@ -25,6 +25,7 @@ import PopUp from "./components/PopUp";
 import BasicTable from "./components/BasicTable";
 import DataTable from "./components/DataTable";
 import { set } from "date-fns";
+import AppointmentDetails from "./AppointmentDetails";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -74,6 +75,8 @@ function MainPage() {
 	const [openPopup, setOpenPopup] = useState(false);
 	const [dataChanged, setDataChanged] = useState(false);
 	const [editButton, setEditButton] = useState(false);
+	const [openDetailsPopup, setOpenDetailsPopup] = useState(false);
+	const [appointmentDetails, setAppointmentDetails] = useState(startObject);
 
 	useEffect(() => {
 		console.log("IN useEffect!");
@@ -168,7 +171,7 @@ function MainPage() {
 		fetchAppointments();
 		fetchClassroomNameTypeAttendies();
 		fetchAppointmentTypes();
-	}, [openPopup]);
+	}, [openPopup, openDetailsPopup]);
 
 	// console.log(newFormEvent);
 
@@ -283,6 +286,44 @@ function MainPage() {
 	// console.log("After render", newFormEvent);
 	console.log("AFter render", appointmentsToReserve);
 
+	async function getAppointmentDetails(id) {
+		try {
+			let response = await axios.get(`appointment/details?id=${id}`, {
+				headers: { Authorization: `Bearer ${auth.token}` },
+			});
+
+			setAppointmentDetails({
+				id: response.data.id,
+				title: response.data.name,
+				desc: response.data.decription,
+				reason: response.data.reason,
+				date: new Date(response.data.date),
+				start: response.data.start_timeInHours + ":00",
+				end: response.data.end_timeInHours + ":00",
+				attendies: response.data.number_of_attendies,
+				type: {
+					label: response.data.type.name,
+					value: response.data.type.id,
+				},
+				classroom: {
+					id: response.data.classroomId,
+					name: response.data.classroomName,
+				},
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	function handleSelectEvent(e) {
+		setOpenDetailsPopup(true);
+		// setAppointmentDetails(e);
+		// izvucem id i na osnovu njega dobijem appointment details
+		getAppointmentDetails(e.id);
+	}
+
+	console.log("mrs", appointmentDetails);
+
 	return (
 		<div>
 			{/* Ovaj div u novu komponentu */}
@@ -392,11 +433,28 @@ function MainPage() {
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 1200, marginLeft: "230px" }}
+				style={{ height: 1200, marginLeft: "220px" }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"
+				popup
+				onSelectEvent={handleSelectEvent}
 			/>
+
+			{/* PopUp for event details */}
+			{openDetailsPopup && (
+				<div className="">
+					<PopUp title="Details" openPopup={openDetailsPopup} setOpenPopup={setOpenDetailsPopup}>
+						<AppointmentDetails
+							appointmentDetails={appointmentDetails}
+							setAppointmentDetails={setAppointmentDetails}
+							appointmentTypes={appointmentTypes}
+							rows={rows}
+							setOpenPopup={setOpenDetailsPopup}
+						/>
+					</PopUp>
+				</div>
+			)}
 		</div>
 	);
 }
