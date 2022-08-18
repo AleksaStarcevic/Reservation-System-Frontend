@@ -323,6 +323,7 @@ function MainPage() {
 	}
 
 	console.log("mrs", appointmentDetails);
+	console.log("Popup", openDetailsPopup);
 
 	return (
 		<div>
@@ -377,6 +378,7 @@ function MainPage() {
 						onChange={date => setNewFormEvent({ ...newFormEvent, date })}
 					/>
 					<input
+						step="3600"
 						type="time"
 						placeholder="Add start time"
 						style={{ width: "20%", marginRight: "10px" }}
@@ -384,6 +386,7 @@ function MainPage() {
 						onChange={e => setNewFormEvent({ ...newFormEvent, start: e.target.value })}
 					/>
 					<input
+						step="3600"
 						type="time"
 						placeholder="Add end time"
 						style={{ width: "20%", marginRight: "10px" }}

@@ -26,24 +26,38 @@ function AppointmentDetails(props) {
 		}
 	}
 
-	async function handleEdit(id) {
+	function openForm() {
 		setEditOn(true);
-		// let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
+	}
 
-		// const arrayOfBojects = appointmentsToReserve.map(el => {
-		// 	return {
-		// 		email: auth.email,
-		// 		classroomId: el.classroom.id,
-		// 		name: el.title,
-		// 		date: dateFormated,
-		// 		decription: el.desc,
-		// 		reason: el.reason,
-		// 		number_of_attendies: parseInt(el.attendies),
-		// 		start_timeInHours: parseInt(el.start),
-		// 		end_timeInHours: parseInt(el.end),
-		// 		type: el.type,
-		// 	};
-		// });
+	async function handleEdit() {
+		let dateFormated = moment(appointmentDetails.date).format("YYYY-MM-DD");
+
+		const objectForUpdate = {
+			id: appointmentDetails.id,
+			classroomId: appointmentDetails.classroom.id,
+			name: appointmentDetails.title,
+			date: dateFormated,
+			decription: appointmentDetails.desc,
+			reason: appointmentDetails.reason,
+			number_of_attendies: parseInt(appointmentDetails.attendies),
+			start_timeInHours: parseInt(appointmentDetails.start),
+			end_timeInHours: parseInt(appointmentDetails.end),
+			type: appointmentDetails.type.value,
+		};
+
+		try {
+			let response = await axios.patch(`/appointment`, objectForUpdate, {
+				headers: { Authorization: `Bearer ${auth.token}` },
+			});
+
+			if (response.status === 200) {
+				alert("Appointment successfully edited");
+				setEditOn(false);
+			}
+		} catch (err) {
+			alert(err.response.data);
+		}
 	}
 	console.log(appointmentDetails);
 	return (
@@ -64,7 +78,7 @@ function AppointmentDetails(props) {
 							<p>Attendies:{appointmentDetails.attendies}</p>
 							<p>Appointment type:{appointmentDetails.type.label}</p>
 							<div className="detailsButton">
-								<button onClick={() => handleEdit(appointmentDetails.id)} className="seeMore">
+								<button onClick={() => openForm()} className="seeMore">
 									{" "}
 									Edit
 								</button>
@@ -141,6 +155,7 @@ function AppointmentDetails(props) {
 
 					{/* TABLE */}
 					<DataTable rows={rows} setNewFormEvent={setAppointmentDetails} newFormEvent={appointmentDetails} />
+					<button onClick={() => handleEdit()}>Edit event</button>
 				</div>
 			)}
 		</>
