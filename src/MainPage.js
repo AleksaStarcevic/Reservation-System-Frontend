@@ -115,21 +115,20 @@ function MainPage() {
 				const appointments = response.data;
 				const newAr = [];
 				// transformacija niza iz baze u niz za prikaz
-				// if (appointmentsToReserve.length === 0) {
-
-				appointments.forEach(el => {
-					const dates = el.date.split("-");
-					if (el.status.id === 1) {
-						newAr.push({
-							id: el.id,
-							start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, 0, 0),
-							end: new Date(dates[0], dates[1] - 1, dates[2], el.end_timeInHours, 0, 0),
-							title: el.name,
-							resourceId: el.classroom.id,
-						});
-					}
-				});
-				// }
+				if (Array.isArray(appointments)) {
+					appointments.forEach(el => {
+						const dates = el.date.split("-");
+						if (el.status.id === 1) {
+							newAr.push({
+								id: el.id,
+								start: new Date(dates[0], dates[1] - 1, dates[2], el.start_timeInHours, 0, 0),
+								end: new Date(dates[0], dates[1] - 1, dates[2], el.end_timeInHours, 0, 0),
+								title: el.name,
+								resourceId: el.classroom.id,
+							});
+						}
+					});
+				}
 
 				setAllEvents(newAr);
 			} catch (err) {
@@ -153,13 +152,14 @@ function MainPage() {
 				let response = await axios.get(`common/appointment/types`, {
 					headers: { Authorization: `Bearer ${auth.token}` },
 				});
-				let ar;
+				let ar = [];
 				// if (!response.data.length) {
 
-				ar = response.data.map(el => {
-					return { label: el.name, value: el.id };
-				});
-				// }
+				if (Array.isArray(response.data)) {
+					ar = response.data.map(el => {
+						return { label: el.name, value: el.id };
+					});
+				}
 
 				setAppointmentTypes(ar);
 			} catch (err) {

@@ -30,10 +30,11 @@ export default function DataTable(props) {
 				</TableHead>
 				<TableBody>
 					{/* {!rows.length && */}
-					{rows.map(row => (
-						<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-							<TableCell>
-								{/* <Checkbox
+					{Array.isArray(rows)
+						? rows.map(row => (
+								<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+									<TableCell>
+										{/* <Checkbox
 									checked={newFormEvent.classroom.id === row.id ? true : false}
 									onChange={e => {
 										// setSelected({ id: row.id, selected: e.target.checked });
@@ -44,26 +45,27 @@ export default function DataTable(props) {
 									}}
 								/> */}
 
-								<Radio
-									checked={newFormEvent.classroom.id === row.id ? true : false}
-									onChange={e => {
-										// setSelected({ id: row.id, selected: e.target.checked });
-										setNewFormEvent({
-											...newFormEvent,
-											classroom: { id: row.id, name: row.name, selected: e.target.checked },
-										});
-									}}
-								/>
-							</TableCell>
+										<Radio
+											checked={newFormEvent.classroom.id === row.id ? true : false}
+											onChange={e => {
+												// setSelected({ id: row.id, selected: e.target.checked });
+												setNewFormEvent({
+													...newFormEvent,
+													classroom: { id: row.id, name: row.name, selected: e.target.checked },
+												});
+											}}
+										/>
+									</TableCell>
 
-							<TableCell component="th" scope="row">
-								{row.id}
-							</TableCell>
-							<TableCell align="right">{row.name}</TableCell>
-							<TableCell align="right">{row.capacity}</TableCell>
-							<TableCell align="right">{row.type}</TableCell>
-						</TableRow>
-					))}
+									<TableCell component="th" scope="row">
+										{row.id}
+									</TableCell>
+									<TableCell align="right">{row.name}</TableCell>
+									<TableCell align="right">{row.capacity}</TableCell>
+									<TableCell align="right">{row.type}</TableCell>
+								</TableRow>
+						  ))
+						: null}
 				</TableBody>
 			</Table>
 		</TableContainer>

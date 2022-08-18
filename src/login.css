@@ -39,3 +39,22 @@
 .app .error{
     color: red;
 }
+
+#myForm{
+    display: flex;
+    
+}
+
+
+
+.signupSelects{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    top: 70px;
+}
+
+.signupSelect{
+width: 150px;
+margin-top: 30px;
+}

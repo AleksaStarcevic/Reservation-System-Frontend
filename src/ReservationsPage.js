@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "./context/AuthProvider";
 import axios from "./api/axios";
 import { useNavigate, Link } from "react-router-dom";
+import avatarImage from "./avatar.png";
 
 function ReservationsPage() {
 	const { auth } = useContext(AuthContext);
@@ -15,7 +16,7 @@ function ReservationsPage() {
 					headers: { Authorization: `Bearer ${auth.token}` },
 				});
 
-				// console.log(response.data);
+				// console.log("Img", response.data);
 
 				// let objurl = null;
 				// const blob = response.data[0].image;
@@ -39,7 +40,7 @@ function ReservationsPage() {
 				return (
 					<div className="card_item" key={el.id}>
 						<div className="card_inner">
-							<img src={el.image} alt="" />
+							<img src={avatarImage} alt="" />
 							<div className="userName">{`${el.firstName} ${el.lastName}`}</div>
 							<div className="userUrl">{el.type}</div>
 							<div className="detail-box">

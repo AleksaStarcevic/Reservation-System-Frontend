@@ -84,10 +84,10 @@ function Login() {
 							<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
 						))}
 						{error && <p className="error">Invalid username or password!</p>}
-						<button>Submit</button>
+						<button>Login</button>
 
 						<p>
-							Need acount?
+							Don't have acount?
 							<span>
 								<Link to="signup">Sign up</Link>
 							</span>
