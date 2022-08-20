@@ -9,23 +9,27 @@ function ReservationsPage() {
 	const [users, setUsers] = useState([]);
 
 	useEffect(() => {
+		// samo ako je user admin
+
 		const fetchPendingAppointmentsForUser = async () => {
-			try {
-				let response = await axios.get(`user/appointments-requested`, {
-					responseType: "json",
-					headers: { Authorization: `Bearer ${auth.token}` },
-				});
+			if (auth.admin === true) {
+				try {
+					let response = await axios.get(`user/appointments-requested`, {
+						responseType: "json",
+						headers: { Authorization: `Bearer ${auth.token}` },
+					});
 
-				// console.log("Img", response.data);
+					// console.log("Img", response.data);
 
-				// let objurl = null;
-				// const blob = response.data[0].image;
+					// let objurl = null;
+					// const blob = response.data[0].image;
 
-				// objurl = URL.createObjectURL(blob);
+					// objurl = URL.createObjectURL(blob);
 
-				setUsers(response.data);
-			} catch (err) {
-				console.log(err);
+					setUsers(response.data);
+				} catch (err) {
+					console.log(err);
+				}
 			}
 		};
 

@@ -5,16 +5,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { Select } from "@mui/material";
 
 function SignUp() {
+	const navigate = useNavigate();
 	const [values, setValues] = useState({
 		email: "",
 		password: "",
 		confirmPassword: "",
 		firstname: "",
 		lastname: "",
-		department: "",
-		title: "",
-		education: "",
+		image: "",
 	});
+
+	// const [upload, setUpload] = useState("");
 	const [displaySpan, setDisplaySpan] = useState(false);
 	const inputs = [
 		{
@@ -68,10 +69,21 @@ function SignUp() {
 			pattern: "^[a-zA-Z].{2,}$",
 			required: true,
 		},
+		// {
+		// 	id: 6,
+		// 	name: "simage",
+		// 	type: "file",
+		// 	label: "Image",
+		// },
 	];
 
 	const onChange = e => {
+		// if (e.target.name === "image") {
+		// 	setValues({ ...values, [e.target.name]: e.target.files[0] });
+		// 	console.log(e.target.files[0]);
+		// } else {
 		setValues({ ...values, [e.target.name]: e.target.value });
+		// }
 	};
 
 	async function handleSubmit(e) {
@@ -84,6 +96,8 @@ function SignUp() {
 		// 	firstname: "",
 		// 	lastname: "",
 		// });
+		// const fd = new FormData();
+		// fd.append("image", values.image, values.image.name);
 
 		const objectToSend = {
 			email: values.email,
@@ -97,13 +111,15 @@ function SignUp() {
 			let response = await axios.post(`/register`, objectToSend);
 
 			if (response.status === 200) {
-				//redirect na kucanje koda
-				console.log("yay");
+				alert("Registration successful, check your email then login");
+				navigate("/");
 			}
 		} catch (err) {
 			setDisplaySpan(true);
 		}
 	}
+
+	console.log(values);
 
 	return (
 		<>
@@ -114,7 +130,10 @@ function SignUp() {
 						{inputs.map(input => (
 							<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
 						))}
+						{/* <input type="file" onChange={e => setValues({ ...values, image: e.target.files[0] })}></input> */}
+
 						{displaySpan && <span style={{ color: "red" }}>User is already registered, go to sign in</span>}
+
 						<button>Submit</button>
 						<p>
 							Already have account?
@@ -122,29 +141,6 @@ function SignUp() {
 								<Link to="/">Sign in</Link>
 							</span>
 						</p>
-					</div>
-					<div className="signupSelects">
-						<Select
-							className="signupSelect"
-							value={values.department}
-							onChange={e => setValues({ ...values, department: e.value })}
-							// options={appointmentTypes}
-							placeholder="Select department"
-						/>
-						<Select
-							className="signupSelect"
-							value={values.title}
-							onChange={e => setValues({ ...values, title: e.value })}
-							// options={appointmentTypes}
-							placeholder="Select title"
-						/>
-						<Select
-							className="signupSelect"
-							value={values.education}
-							onChange={e => setValues({ ...values, education: e.value })}
-							// options={appointmentTypes}
-							placeholder="Select education"
-						/>
 					</div>
 				</form>
 			</div>

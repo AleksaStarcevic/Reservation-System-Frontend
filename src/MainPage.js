@@ -26,6 +26,7 @@ import BasicTable from "./components/BasicTable";
 import DataTable from "./components/DataTable";
 import { set } from "date-fns";
 import AppointmentDetails from "./AppointmentDetails";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -40,7 +41,7 @@ const localizer = dateFnsLocalizer({
 });
 
 function MainPage() {
-	const { auth } = useContext(AuthContext);
+	const { auth, setAuth } = useContext(AuthContext);
 
 	let startObject = {
 		id: Math.floor(Math.random() * 10000),
@@ -173,7 +174,24 @@ function MainPage() {
 		fetchAppointmentTypes();
 	}, [openPopup, openDetailsPopup]);
 
-	// console.log(newFormEvent);
+	useEffect(() => {
+		isUserAdmin();
+		console.log("Inside another LIVE!!");
+	}, []);
+
+	async function isUserAdmin() {
+		try {
+			let response = await axios.get(`user/admin`, {
+				headers: { Authorization: `Bearer ${auth.token}` },
+			});
+
+			if (response.status === 200) {
+				setAuth({ ...auth, admin: response.data });
+			}
+		} catch (err) {
+			console.log(err); // not in 200
+		}
+	}
 
 	async function handleReserve() {
 		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
@@ -272,7 +290,7 @@ function MainPage() {
 		isClassroomAvailableForDate();
 		// setNewFormEvent(startObject);
 		// resetuj niz, formu i tabelu
-		setAppointmentsToReserve([]);
+		// setAppointmentsToReserve([]);
 	}
 
 	function handleEditAppointment(e) {
@@ -326,11 +344,12 @@ function MainPage() {
 	console.log("Popup", openDetailsPopup);
 
 	return (
-		<div>
+		<div className="glavniDiv">
 			{/* Ovaj div u novu komponentu */}
 			<div className="aa">
 				<div className="dugmad">
-					<button onClick={() => setOpenPopup(true)}>Dodaj dogadjaj</button>
+					{/* <span>Add new appointment</span> */}
+					<AddCircleIcon fontSize="large" onClick={() => setOpenPopup(true)}></AddCircleIcon>
 				</div>
 			</div>
 
@@ -436,7 +455,7 @@ function MainPage() {
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 1200, marginLeft: "220px" }}
+				style={{ height: 1200 }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"

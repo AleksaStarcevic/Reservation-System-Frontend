@@ -4,11 +4,13 @@ import { SidebarData } from "./SidebarData";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
 import axios from "../api/axios";
+import avatarImage from "../avatar.png";
 
 function Sidebar() {
 	let navigate = useNavigate();
-	const { auth } = useContext(AuthContext);
+	const { auth, setAuth } = useContext(AuthContext);
 	const [users, setUsers] = useState([]);
+	const [user, setUser] = useState({});
 
 	useEffect(() => {
 		const fetchPendingAppointmentsForUser = async () => {
@@ -24,15 +26,45 @@ function Sidebar() {
 			}
 		};
 
+		const fetchUserDetails = async () => {
+			try {
+				let response = await axios.get(`/user`, {
+					headers: { Authorization: `Bearer ${auth.token}` },
+				});
+
+				setUser(response.data);
+			} catch (err) {
+				console.log(err);
+			}
+		};
+
 		fetchPendingAppointmentsForUser();
+		fetchUserDetails();
 	}, []);
+
+	function handleLink(link) {
+		console.log("pre", auth);
+		if (link === "/") {
+			navigate(link);
+			setAuth(null);
+			console.log("posle", auth);
+		} else {
+			navigate(link);
+		}
+	}
 
 	return (
 		<div className="Sidebar">
+			<div className="profileImgAndUser">
+				<img src={avatarImage} alt="" />
+				<p className="welcomeUser">
+					Welcome, {user.firstName} {user.lastName}
+				</p>
+			</div>
 			<ul className="SidebarList">
 				{SidebarData.map((el, key) => {
 					return (
-						<li className="row" key={key} onClick={() => navigate(el.link)}>
+						<li className="row" key={key} onClick={() => handleLink(el.link)}>
 							{" "}
 							{el.title === "Requests" ? (
 								<div id="icon">

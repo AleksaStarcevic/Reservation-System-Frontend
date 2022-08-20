@@ -8,9 +8,10 @@ import ReservationsPage from "./ReservationsPage";
 import AccountPage from "./AccountPage";
 import RequestsByUserPage from "./components/RequestsByUserPage";
 import SidebarLayout from "./components/SidebarLayout";
+
 function App() {
 	return (
-		<>
+		<div className="appDiv">
 			<Routes>
 				<Route path="/signup" element={<SignUp />} />
 				<Route path="/" element={<Login />} />
@@ -23,7 +24,7 @@ function App() {
 					<Route path="*" element={<ErrorPage />} />
 				</Route>
 			</Routes>
-		</>
+		</div>
 	);
 }
 

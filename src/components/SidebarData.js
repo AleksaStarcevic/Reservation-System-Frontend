@@ -4,12 +4,14 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
+
 export const SidebarData = [
 	{
 		title: "Home",
 		icon: <HomeIcon />,
 		link: "/main",
 	},
+
 	{
 		title: "Requests",
 		icon: <CalendarMonthIcon />,
@@ -23,6 +25,6 @@ export const SidebarData = [
 	{
 		title: "Logout",
 		icon: <LogoutIcon />,
-		link: "/logout",
+		link: "/",
 	},
 ];
