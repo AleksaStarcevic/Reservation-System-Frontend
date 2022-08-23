@@ -20,6 +20,7 @@ export default function BasicTable(props) {
 		newFormEvent,
 		appointmentsToReserve,
 		handleReserve,
+		auth,
 	} = props;
 
 	function handleDelete(id) {
@@ -85,9 +86,7 @@ export default function BasicTable(props) {
 							<TableCell align="right">
 								{row.start} - {row.end}
 							</TableCell>
-							<TableCell>
-								<button /*onClick={() => handleEdit(row.id)}*/>Izmeni</button>
-							</TableCell>
+
 							<TableCell>
 								<button onClick={() => handleDelete(row.id)}>Obrisi</button>
 							</TableCell>
@@ -95,9 +94,9 @@ export default function BasicTable(props) {
 					))}
 				</TableBody>
 			</Table>
-			<button onClick={() => handleReserve()} disabled={checkAvailableReservations()}>
-				Posalji na odobravanje
-			</button>
+			{appointmentsToReserve.length > 0 && (
+				<button onClick={() => handleReserve()}>{auth.admin === true ? "Reserve" : "Send for approval"}</button>
+			)}
 		</TableContainer>
 	);
 }

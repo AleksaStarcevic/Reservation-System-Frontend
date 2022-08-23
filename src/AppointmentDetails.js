@@ -129,6 +129,8 @@ function AppointmentDetails(props) {
 						onChange={date => setAppointmentDetails({ ...appointmentDetails, date })}
 					/>
 					<input
+						min="08:00"
+						max="20:00"
 						type="time"
 						step="3600"
 						placeholder="Add start time"
@@ -136,7 +138,17 @@ function AppointmentDetails(props) {
 						value={appointmentDetails.start}
 						onChange={e => setAppointmentDetails({ ...appointmentDetails, start: e.target.value })}
 					/>
+					{(parseInt(appointmentDetails.start) >= 8 && parseInt(appointmentDetails.start) < 20) ||
+					appointmentDetails.start === "" ? (
+						""
+					) : (
+						<span className="sp4" style={{ display: "block" }}>
+							Start time must must be between 8:00 h and 19:00h
+						</span>
+					)}
 					<input
+						min="08:00"
+						max="20:00"
 						type="time"
 						step="3600"
 						placeholder="Add end time"
@@ -144,6 +156,15 @@ function AppointmentDetails(props) {
 						value={appointmentDetails.end}
 						onChange={e => setAppointmentDetails({ ...appointmentDetails, end: e.target.value })}
 					/>
+					{(parseInt(appointmentDetails.end) > parseInt(appointmentDetails.start) &&
+						parseInt(appointmentDetails.end) <= 20) ||
+					appointmentDetails.end === "" ? (
+						""
+					) : (
+						<span className="sp5" style={{ display: "block" }}>
+							End time must be between start time and 20:00h
+						</span>
+					)}
 
 					<input
 						type="number"
@@ -152,6 +173,13 @@ function AppointmentDetails(props) {
 						value={appointmentDetails.attendies}
 						onChange={e => setAppointmentDetails({ ...appointmentDetails, attendies: e.target.value })}
 					/>
+					{appointmentDetails.attendies > 0 || appointmentDetails.attendies === "" ? (
+						""
+					) : (
+						<span className="sp6" style={{ display: "block" }}>
+							Number of attendies must be greater than 0
+						</span>
+					)}
 
 					{/* TABLE */}
 					<DataTable rows={rows} setNewFormEvent={setAppointmentDetails} newFormEvent={appointmentDetails} />

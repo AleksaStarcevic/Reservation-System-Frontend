@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import React from "react";
 
 function PopUp(props) {
-	const { title, children, openPopup, setOpenPopup } = props;
+	const { title, children, openPopup, setOpenPopup, loading, setLoading } = props;
 	return (
 		<Dialog
 			open={openPopup}

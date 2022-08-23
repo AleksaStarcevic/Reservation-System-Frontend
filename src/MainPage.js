@@ -27,6 +27,11 @@ import DataTable from "./components/DataTable";
 import { set } from "date-fns";
 import AppointmentDetails from "./AppointmentDetails";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { gridColumnLookupSelector } from "@mui/x-data-grid";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const locales = {
 	"en-US": require("date-fns/locale/en-US"),
@@ -78,6 +83,15 @@ function MainPage() {
 	const [editButton, setEditButton] = useState(false);
 	const [openDetailsPopup, setOpenDetailsPopup] = useState(false);
 	const [appointmentDetails, setAppointmentDetails] = useState(startObject);
+	const [loading, setLoading] = useState(false);
+
+	const [focused, setFocused] = useState({
+		focusedTitle: "",
+		focusedDesc: "",
+		focusedReason: "",
+		focusedType: "",
+		focusedDate: "",
+	});
 
 	useEffect(() => {
 		console.log("IN useEffect!");
@@ -220,9 +234,13 @@ function MainPage() {
 			});
 
 			if (response.status === 200) {
-				alert("Uspesno rezervisani termini");
+				if (auth.admin === true) {
+					notifySuccess("The appointments have been successfully reserved");
+				} else {
+					notifyInfo("The appointments have been sent for approval");
+				}
 			} else {
-				alert("Doslo je do greske");
+				notifyError("Error!");
 			}
 		} catch (err) {
 			console.log(err); // not in 200
@@ -275,7 +293,7 @@ function MainPage() {
 				// setDataChanged(true);
 			} else {
 				// setNewFormEvent(newFormEvent);
-				console.log(`Appointment in selected classroom is reserved`);
+				notifyError("Appointment in the given classroom at the given time is already reserved");
 			}
 
 			// console.log("avail", newFormEvent);
@@ -293,13 +311,13 @@ function MainPage() {
 		// setAppointmentsToReserve([]);
 	}
 
-	function handleEditAppointment(e) {
-		e.preventDefault();
+	// function handleEditAppointment(e) {
+	// 	e.preventDefault();
 
-		isClassroomAvailableForDate();
-		setEditButton(false);
-		// setNewFormEvent(startObject);
-	}
+	// 	isClassroomAvailableForDate();
+	// 	setEditButton(false);
+	// 	// setNewFormEvent(startObject);
+	// }
 
 	// console.log("After render", newFormEvent);
 	console.log("AFter render", appointmentsToReserve);
@@ -340,8 +358,40 @@ function MainPage() {
 		getAppointmentDetails(e.id);
 	}
 
-	console.log("mrs", appointmentDetails);
-	console.log("Popup", openDetailsPopup);
+	const notifyInfo = text => {
+		toast.info(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
+	const notifyError = text => {
+		toast.error(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+	const notifySuccess = text => {
+		toast.success(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
 
 	return (
 		<div className="glavniDiv">
@@ -353,29 +403,51 @@ function MainPage() {
 				</div>
 			</div>
 
-			<PopUp title="Add appointment" openPopup={openPopup} setOpenPopup={setOpenPopup}>
+			<PopUp
+				title="Add appointment"
+				openPopup={openPopup}
+				setOpenPopup={setOpenPopup}
+				loading={loading}
+				setLoading={setLoading}
+			>
 				<div className="laga">
 					<input
+						className="in1"
 						type="text"
 						placeholder="Add Title"
 						style={{ width: "20%", marginRight: "10px" }}
 						value={newFormEvent.title}
+						required
+						onBlur={() => setFocused({ ...focused, focusedTitle: true })}
+						focused={focused.focusedTitle.toString()}
 						onChange={e => setNewFormEvent({ ...newFormEvent, title: e.target.value })}
 					/>
+					<span className="sp1">Title can't be empty</span>
 					<input
+						className="in2"
 						type="text"
 						placeholder="Add Desc"
 						style={{ width: "20%", marginRight: "10px" }}
 						value={newFormEvent.desc}
+						required
+						onBlur={() => setFocused({ ...focused, focusedDesc: true })}
+						focused={focused.focusedDesc.toString()}
 						onChange={e => setNewFormEvent({ ...newFormEvent, desc: e.target.value })}
 					/>
+					<span className="sp2">Description can't be empty</span>
 					<input
+						className="in3"
 						type="text"
 						placeholder="Add Reason"
 						style={{ width: "20%", marginRight: "10px" }}
 						value={newFormEvent.reason}
+						required
+						onBlur={() => setFocused({ ...focused, focusedReason: true })}
+						focused={focused.focusedReason.toString()}
 						onChange={e => setNewFormEvent({ ...newFormEvent, reason: e.target.value })}
 					/>
+					<span className="sp3"> Reason can't be empty</span>
+
 					{/* <select value={newFormEvent.type} onChange={e => setNewFormEvent({ ...newFormEvent, type: e.target.value })}>
 					{appointmentTypes.map(el => {
 						return <option key={el.value}>{el.label}</option>;
@@ -383,6 +455,7 @@ function MainPage() {
 					placeholder="Select appointment type"
 				</select> */}
 					<Select
+						className="selectmainPage"
 						value={newFormEvent.type.label}
 						onChange={e => setNewFormEvent({ ...newFormEvent, type: e.value })}
 						options={appointmentTypes}
@@ -396,7 +469,10 @@ function MainPage() {
 						selected={newFormEvent.date}
 						onChange={date => setNewFormEvent({ ...newFormEvent, date })}
 					/>
+					<span className="sp7"> Appointment type can't be empty</span>
 					<input
+						min="08:00"
+						max="20:00"
 						step="3600"
 						type="time"
 						placeholder="Add start time"
@@ -404,7 +480,16 @@ function MainPage() {
 						value={newFormEvent.start}
 						onChange={e => setNewFormEvent({ ...newFormEvent, start: e.target.value })}
 					/>
+					{(parseInt(newFormEvent.start) >= 8 && parseInt(newFormEvent.start) < 20) || newFormEvent.start === "" ? (
+						""
+					) : (
+						<span className="sp4" style={{ display: "block" }}>
+							Start time must must be between 8:00 h and 19:00h
+						</span>
+					)}
 					<input
+						min="08:00"
+						max="20:00"
 						step="3600"
 						type="time"
 						placeholder="Add end time"
@@ -412,6 +497,14 @@ function MainPage() {
 						value={newFormEvent.end}
 						onChange={e => setNewFormEvent({ ...newFormEvent, end: e.target.value })}
 					/>
+					{(parseInt(newFormEvent.end) > parseInt(newFormEvent.start) && parseInt(newFormEvent.end) <= 20) ||
+					newFormEvent.end === "" ? (
+						""
+					) : (
+						<span className="sp5" style={{ display: "block" }}>
+							End time must be between start time and 20:00h
+						</span>
+					)}
 
 					<input
 						type="number"
@@ -420,17 +513,22 @@ function MainPage() {
 						value={newFormEvent.attendies}
 						onChange={e => setNewFormEvent({ ...newFormEvent, attendies: e.target.value })}
 					/>
+					{newFormEvent.attendies > 0 || newFormEvent.attendies === "" ? (
+						""
+					) : (
+						<span className="sp6" style={{ display: "block" }}>
+							Number of attendies must be greater than 0
+						</span>
+					)}
 
 					{/* TABLE */}
+
 					<DataTable rows={rows} setNewFormEvent={setNewFormEvent} newFormEvent={newFormEvent} />
 
-					{editButton === true ? (
-						<button onClick={handleEditAppointment}>Edit event</button>
-					) : (
-						<button style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
-							Add event
-						</button>
-					)}
+					<button style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
+						Add event
+					</button>
+
 					{/* <button  style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
 						Add Event
 					</button> */}
@@ -438,6 +536,7 @@ function MainPage() {
 				{/* Tabela gde punim dodate termine  */}
 				<div>
 					<BasicTable
+						auth={auth}
 						rows={appointmentsToReserve}
 						setAppointmentsToReserve={setAppointmentsToReserve}
 						setNewFormEvent={setNewFormEvent}
@@ -451,11 +550,13 @@ function MainPage() {
 			</PopUp>
 
 			<Calendar
+				min={new Date(0, 0, 0, 8, 0, 0)}
+				max={new Date(0, 0, 0, 21, 0, 0)}
 				localizer={localizer}
 				events={allEvents}
 				startAccessor="start"
 				endAccessor="end"
-				style={{ height: 1200 }}
+				style={{ height: 700 }}
 				resourceIdAccessor="resourceId"
 				resources={classroomTypes}
 				resourceTitleAccessor="resourceTitle"

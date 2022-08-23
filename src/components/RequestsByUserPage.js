@@ -9,12 +9,41 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import moment from "moment";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function RequestsByUserPage() {
 	const { id } = useParams();
 	const { auth } = useContext(AuthContext);
 	const [rows, setRows] = useState([]);
 	const [dataChanged, setDataChanged] = useState(false);
+	const [loading, setLoading] = useState(false);
+
+	const notifyInfo = text => {
+		toast.info(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
+	const notifyError = text => {
+		toast.error(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
 
 	useEffect(() => {
 		const fetchPendingAppointmentsForUser = async () => {
@@ -33,20 +62,24 @@ function RequestsByUserPage() {
 	}, [dataChanged]);
 
 	async function handleAccept(id) {
+		setLoading(prev => !prev);
 		try {
 			let response = await axios.post(
 				`/appointment/confirm`,
+
 				{ id },
 				{
 					headers: { Authorization: `Bearer ${auth.token}` },
 				}
 			);
 
+			setLoading(false);
+
 			if (response.status === 200) {
-				alert("Uspesno odobren termin");
+				notifyInfo("Appointment accepted");
 				setDataChanged(prev => !prev);
 			} else {
-				alert("Doslo je do greske");
+				notifyError("Error!");
 			}
 		} catch (err) {
 			console.log(err);
@@ -54,6 +87,7 @@ function RequestsByUserPage() {
 	}
 
 	async function handleDecline(id) {
+		setLoading(prev => !prev);
 		try {
 			let response = await axios.post(
 				`/appointment/decline`,
@@ -63,11 +97,13 @@ function RequestsByUserPage() {
 				}
 			);
 
+			setLoading(false);
+
 			if (response.status === 200) {
-				alert("Appointment declined!");
+				notifyInfo("Appointment declined");
 				setDataChanged(prev => !prev);
 			} else {
-				alert("Doslo je do greske");
+				notifyError("Error!");
 			}
 		} catch (err) {
 			console.log(err);
@@ -75,6 +111,7 @@ function RequestsByUserPage() {
 	}
 
 	async function handleAcceptAll() {
+		setLoading(prev => !prev);
 		const ids = rows.map(el => {
 			return el.id;
 		});
@@ -84,11 +121,12 @@ function RequestsByUserPage() {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
 
+			setLoading(false);
 			if (response.status === 200) {
-				alert("All appointments accepted!");
+				notifyInfo("All appointments accepted");
 				setDataChanged(prev => !prev);
 			} else {
-				alert("Doslo je do greske");
+				notifyError("Error!");
 			}
 		} catch (err) {
 			console.log(err);
@@ -137,6 +175,11 @@ function RequestsByUserPage() {
 				</Table>
 			</TableContainer>
 			<button onClick={() => handleAcceptAll()}>ACCEPT ALL</button>
+			{loading && (
+				<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>
+					<CircularProgress color="inherit" />
+				</Backdrop>
+			)}
 		</div>
 	);
 }

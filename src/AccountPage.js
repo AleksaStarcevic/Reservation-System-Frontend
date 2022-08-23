@@ -2,6 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "./context/AuthProvider";
 import axios from "./api/axios";
 import MyImage from "./avatar.png";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function AccountPage() {
 	const { auth } = useContext(AuthContext);
@@ -12,6 +16,32 @@ function AccountPage() {
 	});
 	const [changeEmail, setChangeEmail] = useState(false);
 	const [changePassword, setChangePassword] = useState(false);
+
+	const [loading, setLoading] = useState(false);
+
+	const notifySuccess = text => {
+		toast.success(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
+	const notifyError = text => {
+		toast.error(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
 
 	useEffect(() => {
 		const fetchUserDetails = async () => {
@@ -30,6 +60,7 @@ function AccountPage() {
 	}, []);
 
 	async function handleChange() {
+		setLoading(prev => !prev);
 		const email = {
 			email: values.email,
 		};
@@ -39,8 +70,12 @@ function AccountPage() {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
 
+			setLoading(false);
+
 			if (response.status === 200) {
-				alert("Success!");
+				notifySuccess("Email changed successfully");
+			} else {
+				notifyError("Error");
 			}
 		} catch (err) {
 			console.log(err);
@@ -50,6 +85,7 @@ function AccountPage() {
 	}
 
 	async function handleChangePassword() {
+		setLoading(prev => !prev);
 		const passwordObj = {
 			password: values.password,
 		};
@@ -59,8 +95,12 @@ function AccountPage() {
 				headers: { Authorization: `Bearer ${auth.token}` },
 			});
 
+			setLoading(false);
+
 			if (response.status === 200) {
-				alert("Success!");
+				notifySuccess("Password changed successfully");
+			} else {
+				notifyError("Error");
 			}
 		} catch (err) {
 			console.log(err);
@@ -112,6 +152,11 @@ function AccountPage() {
 					)}
 				</div>
 			</div>
+			{loading && (
+				<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>
+					<CircularProgress color="inherit" />
+				</Backdrop>
+			)}
 		</div>
 	);
 }
