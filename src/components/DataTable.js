@@ -11,6 +11,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 
 import FormControl from "@mui/material/FormControl";
+import "./table.css";
 
 export default function DataTable(props) {
 	const { rows, setNewFormEvent, newFormEvent } = props;
@@ -18,22 +19,28 @@ export default function DataTable(props) {
 	console.log(`Inside table`, newFormEvent);
 	return (
 		<TableContainer>
-			<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
+			<Table className="tableData" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 				<TableHead>
 					<TableRow>
-						<TableCell></TableCell>
-						<TableCell>Classroom</TableCell>
-						<TableCell align="right">Name</TableCell>
-						<TableCell align="right">Capacity</TableCell>
-						<TableCell align="right">Type</TableCell>
+						<TableCell className="th"></TableCell>
+						<TableCell className="th">Classroom</TableCell>
+						<TableCell className="th" align="right">
+							Name
+						</TableCell>
+						<TableCell className="th" align="right">
+							Capacity
+						</TableCell>
+						<TableCell className="th" align="right">
+							Type
+						</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{/* {!rows.length && */}
 					{Array.isArray(rows)
 						? rows.map(row => (
-								<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-									<TableCell>
+								<TableRow className="tr" key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+									<TableCell className="td">
 										{/* <Checkbox
 									checked={newFormEvent.classroom.id === row.id ? true : false}
 									onChange={e => {
@@ -57,12 +64,18 @@ export default function DataTable(props) {
 										/>
 									</TableCell>
 
-									<TableCell component="th" scope="row">
+									<TableCell className="td" component="th" scope="row">
 										{row.id}
 									</TableCell>
-									<TableCell align="right">{row.name}</TableCell>
-									<TableCell align="right">{row.capacity}</TableCell>
-									<TableCell align="right">{row.type}</TableCell>
+									<TableCell className="td" align="right">
+										{row.name}
+									</TableCell>
+									<TableCell className="td" align="right">
+										{row.capacity}
+									</TableCell>
+									<TableCell className="td" align="right">
+										{row.type}
+									</TableCell>
 								</TableRow>
 						  ))
 						: null}

@@ -85,14 +85,6 @@ function MainPage() {
 	const [appointmentDetails, setAppointmentDetails] = useState(startObject);
 	const [loading, setLoading] = useState(false);
 
-	const [focused, setFocused] = useState({
-		focusedTitle: "",
-		focusedDesc: "",
-		focusedReason: "",
-		focusedType: "",
-		focusedDate: "",
-	});
-
 	useEffect(() => {
 		console.log("IN useEffect!");
 
@@ -305,22 +297,26 @@ function MainPage() {
 	function handleAddingAppointments(e) {
 		e.preventDefault();
 
+		if (
+			newFormEvent.title === "" ||
+			newFormEvent.desc === "" ||
+			newFormEvent.reason === "" ||
+			newFormEvent.date === "" ||
+			newFormEvent.classroom.name === "" ||
+			newFormEvent.type.label === "" ||
+			newFormEvent.start === "" ||
+			newFormEvent.end === "" ||
+			newFormEvent.attendies === ""
+		) {
+			notifyError("All fields must be filled!");
+			return;
+		}
 		isClassroomAvailableForDate();
-		// setNewFormEvent(startObject);
-		// resetuj niz, formu i tabelu
-		// setAppointmentsToReserve([]);
+		setNewFormEvent(startObject);
 	}
 
-	// function handleEditAppointment(e) {
-	// 	e.preventDefault();
-
-	// 	isClassroomAvailableForDate();
-	// 	setEditButton(false);
-	// 	// setNewFormEvent(startObject);
-	// }
-
-	// console.log("After render", newFormEvent);
-	console.log("AFter render", appointmentsToReserve);
+	console.log("After render", newFormEvent);
+	// console.log("AFter render", appointmentsToReserve);
 
 	async function getAppointmentDetails(id) {
 		try {
@@ -410,142 +406,154 @@ function MainPage() {
 				loading={loading}
 				setLoading={setLoading}
 			>
-				<div className="laga">
-					<input
-						className="in1"
-						type="text"
-						placeholder="Add Title"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.title}
-						required
-						onBlur={() => setFocused({ ...focused, focusedTitle: true })}
-						focused={focused.focusedTitle.toString()}
-						onChange={e => setNewFormEvent({ ...newFormEvent, title: e.target.value })}
-					/>
-					<span className="sp1">Title can't be empty</span>
-					<input
-						className="in2"
-						type="text"
-						placeholder="Add Desc"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.desc}
-						required
-						onBlur={() => setFocused({ ...focused, focusedDesc: true })}
-						focused={focused.focusedDesc.toString()}
-						onChange={e => setNewFormEvent({ ...newFormEvent, desc: e.target.value })}
-					/>
-					<span className="sp2">Description can't be empty</span>
-					<input
-						className="in3"
-						type="text"
-						placeholder="Add Reason"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.reason}
-						required
-						onBlur={() => setFocused({ ...focused, focusedReason: true })}
-						focused={focused.focusedReason.toString()}
-						onChange={e => setNewFormEvent({ ...newFormEvent, reason: e.target.value })}
-					/>
-					<span className="sp3"> Reason can't be empty</span>
+				<div className="popupDiv">
+					<div className="laga">
+						<div className="appDetails">
+							<div className="formRow">
+								<span class="details">Title*</span>
+								<input
+									type="text"
+									placeholder="Add Title"
+									style={{ width: "20%", marginRight: "10px" }}
+									value={newFormEvent.title}
+									required
+									onChange={e => setNewFormEvent({ ...newFormEvent, title: e.target.value })}
+								/>
+							</div>
 
-					{/* <select value={newFormEvent.type} onChange={e => setNewFormEvent({ ...newFormEvent, type: e.target.value })}>
-					{appointmentTypes.map(el => {
-						return <option key={el.value}>{el.label}</option>;
-					})}
-					placeholder="Select appointment type"
-				</select> */}
-					<Select
-						className="selectmainPage"
-						value={newFormEvent.type.label}
-						onChange={e => setNewFormEvent({ ...newFormEvent, type: e.value })}
-						options={appointmentTypes}
-						placeholder="Add appointment type"
-					/>
+							<div className="formRow">
+								<span class="details">Reason*</span>
+								<input
+									type="text"
+									placeholder="Add Reason"
+									style={{ width: "20%", marginRight: "10px" }}
+									value={newFormEvent.reason}
+									required
+									onChange={e => setNewFormEvent({ ...newFormEvent, reason: e.target.value })}
+								/>
+							</div>
 
-					<DatePicker
-						className="datepick"
-						placeholderText="Date"
-						style={{ marginRight: "10px" }}
-						selected={newFormEvent.date}
-						onChange={date => setNewFormEvent({ ...newFormEvent, date })}
-					/>
-					<span className="sp7"> Appointment type can't be empty</span>
-					<input
-						min="08:00"
-						max="20:00"
-						step="3600"
-						type="time"
-						placeholder="Add start time"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.start}
-						onChange={e => setNewFormEvent({ ...newFormEvent, start: e.target.value })}
-					/>
-					{(parseInt(newFormEvent.start) >= 8 && parseInt(newFormEvent.start) < 20) || newFormEvent.start === "" ? (
-						""
-					) : (
-						<span className="sp4" style={{ display: "block" }}>
-							Start time must must be between 8:00 h and 19:00h
-						</span>
-					)}
-					<input
-						min="08:00"
-						max="20:00"
-						step="3600"
-						type="time"
-						placeholder="Add end time"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.end}
-						onChange={e => setNewFormEvent({ ...newFormEvent, end: e.target.value })}
-					/>
-					{(parseInt(newFormEvent.end) > parseInt(newFormEvent.start) && parseInt(newFormEvent.end) <= 20) ||
-					newFormEvent.end === "" ? (
-						""
-					) : (
-						<span className="sp5" style={{ display: "block" }}>
-							End time must be between start time and 20:00h
-						</span>
-					)}
+							<div className="formRow">
+								<span class="details">Description*</span>
+								<input
+									type="text"
+									placeholder="Add Desc"
+									style={{ width: "20%", marginRight: "10px" }}
+									value={newFormEvent.desc}
+									required
+									onChange={e => setNewFormEvent({ ...newFormEvent, desc: e.target.value })}
+								/>
+							</div>
 
-					<input
-						type="number"
-						placeholder="Add number of attendies"
-						style={{ width: "20%", marginRight: "10px" }}
-						value={newFormEvent.attendies}
-						onChange={e => setNewFormEvent({ ...newFormEvent, attendies: e.target.value })}
-					/>
-					{newFormEvent.attendies > 0 || newFormEvent.attendies === "" ? (
-						""
-					) : (
-						<span className="sp6" style={{ display: "block" }}>
-							Number of attendies must be greater than 0
-						</span>
-					)}
+							<div className="formRow">
+								<span class="details">Attendies*</span>
+								<input
+									type="number"
+									placeholder="Add number of attendies"
+									style={{ width: "20%", marginRight: "10px" }}
+									value={newFormEvent.attendies}
+									onChange={e => setNewFormEvent({ ...newFormEvent, attendies: e.target.value })}
+								/>
+								{newFormEvent.attendies > 0 || newFormEvent.attendies === "" ? (
+									""
+								) : (
+									<span className="sp6" style={{ display: "block" }}>
+										Number of attendies must be greater than 0
+									</span>
+								)}
+							</div>
 
-					{/* TABLE */}
+							<div className="formRow">
+								<span class="details">Date*</span>
+								<DatePicker
+									className="datepick"
+									placeholderText="Date"
+									// style={{ marginRight: "10px" }}
+									selected={newFormEvent.date}
+									onChange={date => setNewFormEvent({ ...newFormEvent, date })}
+								/>
+							</div>
 
-					<DataTable rows={rows} setNewFormEvent={setNewFormEvent} newFormEvent={newFormEvent} />
+							<div className="formRow">
+								<span class="details">Type*</span>
+								<Select
+									className="selectmainPage"
+									value={newFormEvent.type.label}
+									onChange={e => setNewFormEvent({ ...newFormEvent, type: e.value })}
+									options={appointmentTypes}
+									placeholder="Add appointment type"
+								/>
+							</div>
 
-					<button style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
-						Add event
-					</button>
+							<div className="formRow">
+								<span class="details">Start time*</span>
+								<input
+									min="08:00"
+									max="20:00"
+									step="3600"
+									type="time"
+									placeholder="Add start time"
+									value={newFormEvent.start}
+									onChange={e => setNewFormEvent({ ...newFormEvent, start: e.target.value })}
+								/>
+								{(parseInt(newFormEvent.start) >= 8 && parseInt(newFormEvent.start) < 20) ||
+								newFormEvent.start === "" ? (
+									""
+								) : (
+									<span className="sp4" style={{ display: "block" }}>
+										Start time must must be between 8:00 h and 19:00h
+									</span>
+								)}
+							</div>
 
-					{/* <button  style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
+							<div className="formRow">
+								<span class="details">End time*</span>
+								<input
+									min="08:00"
+									max="20:00"
+									step="3600"
+									type="time"
+									placeholder="Add end time"
+									value={newFormEvent.end}
+									onChange={e => setNewFormEvent({ ...newFormEvent, end: e.target.value })}
+								/>
+								{(parseInt(newFormEvent.end) > parseInt(newFormEvent.start) && parseInt(newFormEvent.end) <= 20) ||
+								newFormEvent.end === "" ? (
+									""
+								) : (
+									<span className="sp5" style={{ display: "block" }}>
+										End time must be between start time and 20:00h
+									</span>
+								)}
+							</div>
+						</div>
+
+						{/* TABLE */}
+						<div className="roomsBtn">
+							<DataTable rows={rows} setNewFormEvent={setNewFormEvent} newFormEvent={newFormEvent} />
+						</div>
+						<button className="btnAddEvent" style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
+							Add event
+						</button>
+
+						{/* <button  style={{ marginTop: "10px" }} onClick={handleAddingAppointments}>
 						Add Event
 					</button> */}
-				</div>
-				{/* Tabela gde punim dodate termine  */}
-				<div>
-					<BasicTable
-						auth={auth}
-						rows={appointmentsToReserve}
-						setAppointmentsToReserve={setAppointmentsToReserve}
-						setNewFormEvent={setNewFormEvent}
-						setEditButton={setEditButton}
-						editButton={editButton}
-						newFormEvent={newFormEvent}
-						appointmentsToReserve={appointmentsToReserve}
-						handleReserve={handleReserve}
-					/>
+					</div>
+					{/* Tabela gde punim dodate termine  */}
+					<div className="showReser">
+						<BasicTable
+							auth={auth}
+							rows={appointmentsToReserve}
+							setAppointmentsToReserve={setAppointmentsToReserve}
+							setNewFormEvent={setNewFormEvent}
+							setEditButton={setEditButton}
+							editButton={editButton}
+							newFormEvent={newFormEvent}
+							appointmentsToReserve={appointmentsToReserve}
+							handleReserve={handleReserve}
+						/>
+					</div>
 				</div>
 			</PopUp>
 

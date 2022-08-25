@@ -57,21 +57,27 @@ export default function BasicTable(props) {
 
 	return (
 		<TableContainer>
-			<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
+			<Table className="tableBasic" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 				<TableHead>
-					<TableRow>
+					<TableRow className="tr">
 						{/* <TableCell></TableCell> */}
-						<TableCell>Name</TableCell>
-						<TableCell align="right">Classroom</TableCell>
-						<TableCell align="right">Date</TableCell>
-						<TableCell align="right">Time</TableCell>
-						<TableCell></TableCell>
-						<TableCell></TableCell>
+						<TableCell className="th">Name</TableCell>
+						<TableCell className="th" align="right">
+							Classroom
+						</TableCell>
+						<TableCell className="th" align="right">
+							Date
+						</TableCell>
+						<TableCell className="th" align="right">
+							Time
+						</TableCell>
+						<TableCell className="th"></TableCell>
+						<TableCell className="th"></TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{rows.map(row => (
-						<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+						<TableRow className="tr" key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
 							{/* <TableCell>
 								{row.available === true ? (
 									<button style={{ backgroundColor: "green" }}>✔</button>
@@ -79,23 +85,33 @@ export default function BasicTable(props) {
 									<button style={{ backgroundColor: "red" }}>❌</button>
 								)}
 							</TableCell> */}
-							<TableCell align="right">{row.title}</TableCell>
-							<TableCell align="right">{row.classroom.name}</TableCell>
+							<TableCell className="td" align="right">
+								{row.title}
+							</TableCell>
+							<TableCell className="td" align="right">
+								{row.classroom.name}
+							</TableCell>
 
-							<TableCell align="right">{moment(row.date).format("YYYY-MM-DD")}</TableCell>
-							<TableCell align="right">
+							<TableCell className="td" align="right">
+								{moment(row.date).format("YYYY-MM-DD")}
+							</TableCell>
+							<TableCell className="td" align="right">
 								{row.start} - {row.end}
 							</TableCell>
 
-							<TableCell>
-								<button onClick={() => handleDelete(row.id)}>Obrisi</button>
+							<TableCell className="td">
+								<button className="deleteBtn" onClick={() => handleDelete(row.id)}>
+									Obrisi
+								</button>
 							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 			{appointmentsToReserve.length > 0 && (
-				<button onClick={() => handleReserve()}>{auth.admin === true ? "Reserve" : "Send for approval"}</button>
+				<button className="reserveBtn" onClick={() => handleReserve()}>
+					{auth.admin === true ? "Reserve" : "Send for approval"}
+				</button>
 			)}
 		</TableContainer>
 	);

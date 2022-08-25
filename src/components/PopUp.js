@@ -7,16 +7,18 @@ function PopUp(props) {
 		<Dialog
 			open={openPopup}
 			// fullScreen={true}
-			maxWidth={"md"}
+			maxWidth={"lg"}
 			fullWidth={true}
 		>
-			<DialogTitle>
+			<DialogTitle style={{ height: "60px" }}>
 				<div style={{ display: "flex" }}>
 					<h3 style={{ flexGrow: 1, textAlign: "center" }}>{title}</h3>
-					<button onClick={() => setOpenPopup(false)}>X</button>
+					<button className="btnClosePopUp" onClick={() => setOpenPopup(false)}>
+						X
+					</button>
 				</div>
 			</DialogTitle>
-			<DialogContent className="contentpopup" dividers>
+			<DialogContent style={{ background: "#fafafa" }} dividers>
 				{children}
 			</DialogContent>
 		</Dialog>

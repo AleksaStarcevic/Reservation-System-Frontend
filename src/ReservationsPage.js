@@ -19,13 +19,6 @@ function ReservationsPage() {
 						headers: { Authorization: `Bearer ${auth.token}` },
 					});
 
-					// console.log("Img", response.data);
-
-					// let objurl = null;
-					// const blob = response.data[0].image;
-
-					// objurl = URL.createObjectURL(blob);
-
 					setUsers(response.data);
 				} catch (err) {
 					console.log(err);

@@ -3,6 +3,10 @@ import FormInput from "./components/FormInput";
 import axios from "./api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Select } from "@mui/material";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignUp() {
 	const navigate = useNavigate();
@@ -14,6 +18,7 @@ function SignUp() {
 		lastname: "",
 		image: "",
 	});
+	const [loading, setLoading] = useState(false);
 
 	// const [upload, setUpload] = useState("");
 	const [displaySpan, setDisplaySpan] = useState(false);
@@ -77,6 +82,30 @@ function SignUp() {
 		// },
 	];
 
+	const notifySuccess = text => {
+		toast.success(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
+	const notifyError = text => {
+		toast.error(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
 	const onChange = e => {
 		// if (e.target.name === "image") {
 		// 	setValues({ ...values, [e.target.name]: e.target.files[0] });
@@ -88,6 +117,7 @@ function SignUp() {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
+		setLoading(prev => !prev);
 
 		// setValues({
 		// 	email: "",
@@ -110,8 +140,9 @@ function SignUp() {
 		try {
 			let response = await axios.post(`/register`, objectToSend);
 
+			setLoading(false);
 			if (response.status === 200) {
-				alert("Registration successful, check your email then login");
+				notifySuccess("Registration successfull, check your email");
 				navigate("/");
 			}
 		} catch (err) {
@@ -144,6 +175,11 @@ function SignUp() {
 					</div>
 				</form>
 			</div>
+			{loading && (
+				<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>
+					<CircularProgress color="inherit" />
+				</Backdrop>
+			)}
 		</>
 	);
 }

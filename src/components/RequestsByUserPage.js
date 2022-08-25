@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import "./table.css";
 
 function RequestsByUserPage() {
 	const { id } = useParams();
@@ -136,45 +137,60 @@ function RequestsByUserPage() {
 	return (
 		<div>
 			<TableContainer>
-				<Table align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
+				<Table className="table" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
 					<TableHead>
-						<TableRow>
+						<TableRow className="tr">
 							{/* <TableCell></TableCell> */}
-							<TableCell>Name</TableCell>
-							<TableCell align="right">Classroom</TableCell>
-							<TableCell align="right">Date</TableCell>
-							<TableCell align="right">Time</TableCell>
-							<TableCell></TableCell>
-							<TableCell></TableCell>
+							<TableCell className="th">Name</TableCell>
+							<TableCell className="th" align="right">
+								Classroom
+							</TableCell>
+							<TableCell className="th" align="right">
+								Date
+							</TableCell>
+							<TableCell className="th" align="right">
+								Time
+							</TableCell>
+							<TableCell className="th">Accept</TableCell>
+							<TableCell className="th">Decline</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{rows.map(row => (
-							<TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-								<TableCell align="right">{row.title}</TableCell>
-								<TableCell align="right">{row.classroomName}</TableCell>
+							<TableRow className="tr" key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+								<TableCell className="td" align="right">
+									{row.title}
+								</TableCell>
+								<TableCell className="td" align="right">
+									{row.classroomName}
+								</TableCell>
 
-								<TableCell align="right">{moment(row.date).format("YYYY-MM-DD")}</TableCell>
-								<TableCell align="right">
+								<TableCell className="td" align="right">
+									{moment(row.date).format("YYYY-MM-DD")}
+								</TableCell>
+								<TableCell className="td" align="right">
 									{row.startTime}h - {row.endTime}h
 								</TableCell>
-								<TableCell>
-									<button onClick={() => handleAccept(row.id)} style={{ backgroundColor: "green" }}>
+								<TableCell className="td">
+									<button className="btn" onClick={() => handleAccept(row.id)} style={{ backgroundColor: "green" }}>
 										{" "}
 										ACCEPT ✔
 									</button>
 								</TableCell>
-								<TableCell>
-									<button onClick={() => handleDecline(row.id)} style={{ backgroundColor: "red" }}>
+								<TableCell className="td">
+									<button className="btn" onClick={() => handleDecline(row.id)} style={{ backgroundColor: "red" }}>
 										DECLINE ❌
 									</button>
 								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
+					<button className="btnAll" onClick={() => handleAcceptAll()}>
+						ACCEPT ALL
+					</button>
 				</Table>
 			</TableContainer>
-			<button onClick={() => handleAcceptAll()}>ACCEPT ALL</button>
+
 			{loading && (
 				<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>
 					<CircularProgress color="inherit" />

@@ -4,6 +4,8 @@ import axios from "./api/axios";
 import AuthContext from "./context/AuthProvider";
 import FormInput from "./components/FormInput";
 import "./login.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Login() {
 	const { setAuth } = useContext(AuthContext); // postavljanje globalnog korisnika
@@ -11,6 +13,7 @@ function Login() {
 	let navigate = useNavigate();
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const [values, setValues] = useState({
 		username: "",
@@ -42,11 +45,8 @@ function Login() {
 	};
 
 	async function handleSubmit(e) {
+		setLoading(prev => !prev);
 		e.preventDefault();
-		setValues({
-			username: "",
-			password: "",
-		});
 
 		try {
 			const response = await axios.post(
@@ -62,6 +62,8 @@ function Login() {
 				}
 			);
 
+			setLoading(false);
+
 			if (response.headers.validationtoken) {
 				const accessToken = response?.headers?.validationtoken;
 				setAuth({ email: values.username, token: accessToken });
@@ -70,6 +72,11 @@ function Login() {
 				setError(true);
 			}
 		} catch (err) {}
+
+		setValues({
+			username: "",
+			password: "",
+		});
 	}
 
 	return (
@@ -93,6 +100,11 @@ function Login() {
 							</span>
 						</p>
 					</form>
+					{loading && (
+						<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>
+							<CircularProgress color="inherit" />
+						</Backdrop>
+					)}
 				</div>
 			)}
 		</>

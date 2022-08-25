@@ -5,7 +5,11 @@ body{
     padding:0;
 }
 
+.rbc-event{
+    background-color: #3f5972;
+}
 
+/* #3f5972 */
 
 
 .appDiv{
@@ -61,9 +65,10 @@ body{
 .numOfRequests{
     background-color: red;
     border-radius: 5px;
-    padding: 2px 2px;
-    /* position: absolute; */
-    /* right: 5px; */
+    padding: 1.5px 2px;
+    position: relative;
+    bottom: 35px;
+    left: 12px;
 }
 
 .row #icon {
@@ -94,17 +99,141 @@ body{
 
 
 
-
-
-
-
-.laga, .react-datepicker__input-container {
+/* .react-datepicker__input-container{
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+} */
+
+
+
+
+.appDetails {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 100px 12px 0;
+}
+
+.appDetails .formRow {
+    margin-bottom: 15px;
+    width: calc(100% / 2);
+}
+
+ .appDetails .formRow span.details {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.formRow input, .formRow .datepick, .formRow .datepick .selectmainPage {
+   width: 70% !important;
+}
+
+.showReser{
+    margin-top: 40px;
+}
+
+.roomsBtn{
+   position:relative;
+   left: -90px;
+}
+
+.roomsBtnEdit {
+    position: relative;
+    right: -60px;
+}
+
+.css-1s2u09g-control{
+    width: 260px;
+    height: 47px;
+}
+
+.btnClosePopUp{
+    background-color: red;
+    color:#fff;
+    height: 30px;
+}
+
+.btnAddEvent{
+    position: relative;
+    left: 240px;
+    width: 100px;
+        padding: 10px 15px;
+        margin-top: 20px !important;
+        border-radius: 4px;
+        background-color: #2F4050;
+            
+            color: #fff;
+            cursor: pointer;
+}
+
+.reserveBtn{
+    position: relative;
+        left: 170px;
+        width: 100px;
+        padding: 10px 15px;
+        margin-top: 20px;
+        border-radius: 4px;
+        background-color: #2F4050;
+    
+        color: #fff;
+        cursor: pointer;
+}
+
+.deleteBtn{
+   
+        width:70px;
+        padding: 10px 15px;
+       
+        border-radius: 4px;
+        background-color: #2F4050;
+    
+        color: #fff;
+        cursor: pointer;
+}
+
+.btnAddEventEdit{
+    position: relative;
+        left: 180px;
+        width: 100px;
+        padding: 10px 15px;
+        margin-top: 20px !important;
+        border-radius: 4px;
+        background-color: #2F4050;
+    
+        color: #fff;
+        cursor: pointer;
+
+}
+
+/* .formRow {
+    display: flex;
+} */
+
+ 
+
+
+
+/* .formRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+} */
+
+
+
+.popupDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* justify-content: space-around; */
     
 }
+
+
+
 .aa{
     display: flex;
     flex-direction: column;
@@ -114,11 +243,7 @@ body{
 }
 
 
-.contentpopup {
-    display: flex;
-  
-       
-}
+
 
 .laga input {
 padding: 15px;
@@ -128,7 +253,7 @@ padding: 15px;
 }
 
 
-.laga .sp1,.sp2,.sp3,.sp4,.sp5,.sp6,.sp7 {
+.laga .sp4,.sp5,.sp6{
     display: none;
     font-size: 12px;
     padding: 3px;
@@ -140,29 +265,22 @@ padding: 15px;
     border: 1px solid red;
 }
 
-.laga .in1:invalid[focused="true"]+span{
-    display: block;
+.laga input:invalid[focused="true"]+span{
+display: block;
 }
 
-.laga .in2:invalid[focused="true"]+span {
-    display: block;
-}
-
-.laga .in3:invalid[focused="true"]+span {
-    display: block;
-}
-
- .datepick{
-    position: calc();
- }
 
 
 
 
 
-.selectmainPage{
-margin: 5px 0px;
-}
+ 
+
+
+
+
+
+
 
 
 /* .laga input,select {
@@ -171,12 +289,7 @@ margin: 5px 0px;
     border-radius: 4px;
 } */
 
-.laga button {
-    width: 100px;
-    padding: 10px 15px;
-    margin-top: 5px;
-    border-radius: 4px;
-}
+
 
 .dugmad {
     margin-bottom: 6px;
@@ -192,6 +305,17 @@ margin: 5px 0px;
     margin: auto;
     flex-wrap: wrap;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    
+}
+
+.containerWithoutFlex{
+padding: 40px 20px 20px 20px;
+    width: 80%;
+    margin: auto;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
@@ -215,21 +339,21 @@ margin: 5px 0px;
     text-align: center;
 }
 
-.container .card_item:hover {
+.container .card_item:hover,.containerWithoutFlex .card_item:hover {
     transform: scale(1.02);
     transition: transform .3s;
     cursor: pointer;
 }
 
-.container .card_inner {
+.container .card_inner,.containerWithoutFlex .card_inner {
     background: rgba(253, 253, 253, 0.808);
     border-radius: 10px;
     padding: 35px 20px;
     min-width: 225px;
     min-height: 315px;
-    max-height: 390px;
+    max-height: 490px;
     width: 100%;
-    box-shadow: 5px 5px 10px 2px rgba(95, 95, 95, 0.24);
+box-shadow: 0 2px 15px rgba(119, 119, 119, 0.7);
 }
 .detailsButton{
     display: flex;
@@ -251,7 +375,7 @@ margin: 5px 0px;
 }
  
 
-.container .card_item img {
+.container .card_item img, .containerWithoutFlex .card_item img {
     width: 200px;
     height: 120px;
     margin-bottom: 10px;
@@ -260,7 +384,7 @@ margin: 5px 0px;
     transition: transform .2s;
 }
 
-.container .card_item .userName {
+.container .card_item .userName, .containerWithoutFlex .card_item .userName {
     color: #203150;
     font-weight: 600;
     font-size: 20px;
@@ -269,7 +393,7 @@ margin: 5px 0px;
     text-overflow: ellipsis;
 }
 
-.container .card_item .userUrl {
+.container .card_item .userUrl, .containerWithoutFlex .card_item .userUrl {
     font-size: 12px;
     font-weight: 100;
     margin: 5px 0 10px;
@@ -279,7 +403,7 @@ margin: 5px 0px;
     white-space: nowrap;
 }
 
-.container .card_item .gitDetail {
+.container .card_item .gitDetail, .containerWithoutFlex .card_item .gitDetail {
     font-size: 14px;
     line-height: 24px;
     color: #7b8ca0;
@@ -297,26 +421,43 @@ margin: 5px 0px;
     margin: 2px;
     padding: 2px 10px;
     /* border: 2px solid #c7e6fa; */
-    background-color: #f0ebfa;
+    background-color: #2F4050;
     border-radius: 50px;
     font-size: 10px;
     font-weight: 600;
-    color: #788697;
+    color: #fff;
 }
 .linkSee{
     text-decoration: none;
+    color: #fff;
 }
 .seeMore {
-    margin: 10px auto;
-    width: 100px;
-    height: 35px;
-    background: hsl(245, 44%, 65%);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 10px 10px hsl(225, 100%, 94%);
+    appearance: button;
+        backface-visibility: hidden;
+        background-color: #2F4050;
+        border-radius: 6px;
+        border-width: 0;
+        box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .1) 0 2px 5px 0, rgba(0, 0, 0, .07) 0 1px 1px 0;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;
+        font-size: 100%;
+        height: 50px;
+        line-height: 1.15;
+        margin: 12px 0 0;
+        outline: none;
+        overflow: hidden;
+        padding: 0 25px;
+        position: relative;
+        text-align: center;
+        text-transform: none;
+        transform: translateZ(0);
+        transition: all .2s, box-shadow .08s ease-in;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        width: 30%;
 }
 
 .toChange .err {
@@ -332,6 +473,58 @@ margin: 5px 0px;
     display: block;
 }
 
+.toChange input {
+    padding: 5px;
+        margin: 10px 0px;
+        border-radius: 5px;
+        border: 1px solid gray;
 
+}
+
+.toChange label {
+    color: #203150;
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.toChange button {
+    appearance: button;
+        backface-visibility: hidden;
+        background-color: #2F4050;
+        border-radius: 6px;
+        border-width: 0;
+        box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .1) 0 2px 5px 0, rgba(0, 0, 0, .07) 0 1px 1px 0;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;
+        font-size: 100%;
+        height: 44px;
+        line-height: 1.15;
+        margin: 12px 0 0;
+        outline: none;
+        overflow: hidden;
+        padding: 0 25px;
+        position: relative;
+        text-align: center;
+        text-transform: none;
+        transform: translateZ(0);
+        transition: all .2s, box-shadow .08s ease-in;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        width: 30%;
+}
+
+.toChange {
+    margin-top: 15px;
+}
+
+
+
+.accountButtons{
+    display: flex;
+   justify-content: space-around;
+}
 
 

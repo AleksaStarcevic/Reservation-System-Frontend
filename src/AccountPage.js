@@ -117,12 +117,14 @@ function AccountPage() {
 					<img src={MyImage} alt="" />
 					<div className="userName">{`${user.firstName} ${user.lastName}`}</div>
 					<div className="userUrl">{user.typeName}</div>
-					<button className="seeMore" onClick={() => setChangePassword(true)}>
-						Reset password
-					</button>
-					<button className="seeMore" onClick={() => setChangeEmail(true)}>
-						Reset email
-					</button>
+					<div className="accountButtons">
+						<button className="seeMore" onClick={() => setChangePassword(true)}>
+							Reset password
+						</button>
+						<button className="seeMore" onClick={() => setChangeEmail(true)}>
+							Reset email
+						</button>
+					</div>
 
 					{changeEmail && (
 						<div className="toChange">
@@ -133,8 +135,8 @@ function AccountPage() {
 								value={values.email}
 								onChange={e => setValues({ ...values, email: e.target.value })}
 							/>
-							<button onClick={() => handleChange()}>Reset</button>
 							<div className="err">Email must be valid!</div>
+							<button onClick={() => handleChange()}>Reset</button>
 						</div>
 					)}
 					{changePassword && (
@@ -146,8 +148,8 @@ function AccountPage() {
 								value={values.password}
 								onChange={e => setValues({ ...values, password: e.target.value })}
 							/>
-							<button onClick={() => handleChangePassword()}>Reset</button>
 							<div className="err">Password length must be at least 4 and include at least 1 number</div>
+							<button onClick={() => handleChangePassword()}>Reset</button>
 						</div>
 					)}
 				</div>
