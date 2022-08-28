@@ -8,7 +8,9 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function AccountPage() {
-	const { auth } = useContext(AuthContext);
+	// const { auth } = useContext(AuthContext);
+
+	const [local, setLocal] = useState(getInitialState);
 	const [user, setUser] = useState({});
 	const [values, setValues] = useState({
 		email: "",
@@ -18,6 +20,11 @@ function AccountPage() {
 	const [changePassword, setChangePassword] = useState(false);
 
 	const [loading, setLoading] = useState(false);
+
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		return user ? JSON.parse(user) : {};
+	}
 
 	const notifySuccess = text => {
 		toast.success(text, {
@@ -43,11 +50,20 @@ function AccountPage() {
 		});
 	};
 
+	// useEffect(() => {
+	// 	const user = localStorage.getItem("user");
+	// 	if (user) {
+	// 		setAuth(JSON.parse(user));
+	// 	}
+	// }, []);
+
+	console.log(user);
+
 	useEffect(() => {
 		const fetchUserDetails = async () => {
 			try {
 				let response = await axios.get(`/user`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${local.token}` },
 				});
 
 				setUser(response.data);
@@ -67,7 +83,7 @@ function AccountPage() {
 
 		try {
 			let response = await axios.post(`/user/email/reset`, email, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${local.token}` },
 			});
 
 			setLoading(false);
@@ -92,7 +108,7 @@ function AccountPage() {
 
 		try {
 			let response = await axios.post(`/user/password/reset`, passwordObj, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${local.token}` },
 			});
 
 			setLoading(false);
@@ -109,7 +125,6 @@ function AccountPage() {
 		setChangePassword(false);
 	}
 
-	console.log(values);
 	return (
 		<div className="container">
 			<div className="card_item" key={user.firstName}>

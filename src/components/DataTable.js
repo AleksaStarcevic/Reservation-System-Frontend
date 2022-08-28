@@ -16,7 +16,7 @@ import "./table.css";
 export default function DataTable(props) {
 	const { rows, setNewFormEvent, newFormEvent } = props;
 
-	console.log(`Inside table`, newFormEvent);
+	// console.log(`Inside table`, newFormEvent);
 	return (
 		<TableContainer>
 			<Table className="tableData" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">

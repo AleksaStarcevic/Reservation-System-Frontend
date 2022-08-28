@@ -5,18 +5,30 @@ import { useNavigate, Link } from "react-router-dom";
 import avatarImage from "./avatar.png";
 
 function ReservationsPage() {
-	const { auth } = useContext(AuthContext);
+	// const { auth } = useContext(AuthContext);
+	const [authUser, setAuthUser] = useState(getInitialState);
 	const [users, setUsers] = useState([]);
+
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		const admin = JSON.parse(localStorage.getItem("admin"));
+
+		const parseddUser = JSON.parse(user);
+
+		return user ? { ...parseddUser, admin: admin } : {};
+	}
+
+	console.log(authUser);
 
 	useEffect(() => {
 		// samo ako je user admin
 
 		const fetchPendingAppointmentsForUser = async () => {
-			if (auth.admin === true) {
+			if (authUser.admin === true) {
 				try {
 					let response = await axios.get(`user/appointments-requested`, {
 						responseType: "json",
-						headers: { Authorization: `Bearer ${auth.token}` },
+						headers: { Authorization: `Bearer ${authUser.token}` },
 					});
 
 					setUsers(response.data);
@@ -29,8 +41,6 @@ function ReservationsPage() {
 		fetchPendingAppointmentsForUser();
 	}, []);
 
-	console.log(users);
-
 	return (
 		<div className="container">
 			{users.map(el => {
@@ -42,7 +52,7 @@ function ReservationsPage() {
 							<div className="userUrl">{el.type}</div>
 							<div className="detail-box">
 								<div className="gitDetail">
-									<span>Requests</span>
+									<span style={{ background: "#02a186" }}>Requests</span>
 									{el.number_of_requests}
 								</div>
 							</div>

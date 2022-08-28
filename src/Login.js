@@ -6,9 +6,10 @@ import FormInput from "./components/FormInput";
 import "./login.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import FonImage from "./fon.png";
 
 function Login() {
-	const { setAuth } = useContext(AuthContext); // postavljanje globalnog korisnika
+	// const { setAuth } = useContext(AuthContext); // postavljanje globalnog korisnika
 
 	let navigate = useNavigate();
 	const [success, setSuccess] = useState(false);
@@ -66,7 +67,9 @@ function Login() {
 
 			if (response.headers.validationtoken) {
 				const accessToken = response?.headers?.validationtoken;
-				setAuth({ email: values.username, token: accessToken });
+				localStorage.setItem("user", JSON.stringify({ email: values.username, token: accessToken }));
+				// setAuth({ email: values.username, token: accessToken });
+
 				setSuccess(true);
 			} else {
 				setError(true);
@@ -85,6 +88,9 @@ function Login() {
 				navigate("/main")
 			) : (
 				<div className="app">
+					<header>
+						<img src={FonImage}></img>
+					</header>
 					<form onSubmit={handleSubmit}>
 						<h1>Login</h1>
 						{inputs.map(input => (
@@ -96,7 +102,9 @@ function Login() {
 						<p>
 							Don't have acount?
 							<span>
-								<Link to="signup">Sign up</Link>
+								<Link className="dontHave" to="signup">
+									Sign up.
+								</Link>
 							</span>
 						</p>
 					</form>

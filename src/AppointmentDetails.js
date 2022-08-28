@@ -10,8 +10,18 @@ import "react-toastify/dist/ReactToastify.css";
 
 function AppointmentDetails(props) {
 	const { appointmentDetails, setAppointmentDetails, appointmentTypes, rows, setOpenPopup } = props;
-	const { auth } = useContext(AuthContext);
+	// const { auth } = useContext(AuthContext);
+	const [authUser, setAuthUser] = useState(getInitialState);
 	const [editOn, setEditOn] = useState(false);
+
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		const admin = JSON.parse(localStorage.getItem("admin"));
+
+		const parseddUser = JSON.parse(user);
+
+		return user ? { ...parseddUser, admin: admin } : {};
+	}
 
 	const notifyError = text => {
 		toast.error(text, {
@@ -39,7 +49,7 @@ function AppointmentDetails(props) {
 	async function handleDelete(id) {
 		try {
 			let response = await axios.delete(`/appointment?id=${id}`, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 
 			if (response.status === 200) {
@@ -88,7 +98,7 @@ function AppointmentDetails(props) {
 
 		try {
 			let response = await axios.patch(`/appointment`, objectForUpdate, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 
 			if (response.status === 200) {
@@ -96,7 +106,7 @@ function AppointmentDetails(props) {
 				setEditOn(false);
 			}
 		} catch (err) {
-			notifyError("Error");
+			notifyError("Appointment in the given classroom at the given time is already reserved");
 		}
 	}
 	console.log(appointmentDetails);
@@ -136,7 +146,7 @@ function AppointmentDetails(props) {
 					<div className="laga">
 						<div className="appDetails">
 							<div className="formRow">
-								<span class="details">Title*</span>
+								<span className="details">Title*</span>
 								<input
 									type="text"
 									placeholder="Add Title"
@@ -147,7 +157,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Reason*</span>
+								<span className="details">Reason*</span>
 								<input
 									type="text"
 									placeholder="Add Reason"
@@ -158,7 +168,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Description*</span>
+								<span className="details">Description*</span>
 								<input
 									type="text"
 									placeholder="Add Desc"
@@ -169,7 +179,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Attendies*</span>
+								<span className="details">Attendies*</span>
 								<input
 									type="number"
 									placeholder="Add number of attendies"
@@ -187,7 +197,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Date*</span>
+								<span className="details">Date*</span>
 								<DatePicker
 									className="datepick"
 									placeholderText="Date"
@@ -198,7 +208,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Type*</span>
+								<span className="details">Type*</span>
 								<Select
 									value={appointmentDetails.type}
 									onChange={e => setAppointmentDetails({ ...appointmentDetails, type: e })}
@@ -208,7 +218,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Start time*</span>
+								<span className="details">Start time*</span>
 								<input
 									min="08:00"
 									max="20:00"
@@ -230,7 +240,7 @@ function AppointmentDetails(props) {
 							</div>
 
 							<div className="formRow">
-								<span class="details">End time*</span>
+								<span className="details">End time*</span>
 								<input
 									min="08:00"
 									max="20:00"

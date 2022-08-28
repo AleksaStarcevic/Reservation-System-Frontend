@@ -17,7 +17,8 @@ import "./table.css";
 
 function RequestsByUserPage() {
 	const { id } = useParams();
-	const { auth } = useContext(AuthContext);
+	// const { auth } = useContext(AuthContext);
+	const [authUser, setAuthUser] = useState(getInitialState);
 	const [rows, setRows] = useState([]);
 	const [dataChanged, setDataChanged] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -46,11 +47,16 @@ function RequestsByUserPage() {
 		});
 	};
 
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		return user ? JSON.parse(user) : {};
+	}
+
 	useEffect(() => {
 		const fetchPendingAppointmentsForUser = async () => {
 			try {
 				let response = await axios.get(`user/appointments/pending?id=${id}`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
 
 				setRows(response.data);
@@ -70,7 +76,7 @@ function RequestsByUserPage() {
 
 				{ id },
 				{
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				}
 			);
 
@@ -94,7 +100,7 @@ function RequestsByUserPage() {
 				`/appointment/decline`,
 				{ id },
 				{
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				}
 			);
 
@@ -119,7 +125,7 @@ function RequestsByUserPage() {
 
 		try {
 			let response = await axios.post(`/appointment/confirm/all`, ids, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 
 			setLoading(false);
@@ -136,60 +142,64 @@ function RequestsByUserPage() {
 
 	return (
 		<div>
-			<TableContainer>
-				<Table className="table" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
-					<TableHead>
-						<TableRow className="tr">
-							{/* <TableCell></TableCell> */}
-							<TableCell className="th">Name</TableCell>
-							<TableCell className="th" align="right">
-								Classroom
-							</TableCell>
-							<TableCell className="th" align="right">
-								Date
-							</TableCell>
-							<TableCell className="th" align="right">
-								Time
-							</TableCell>
-							<TableCell className="th">Accept</TableCell>
-							<TableCell className="th">Decline</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.map(row => (
-							<TableRow className="tr" key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-								<TableCell className="td" align="right">
-									{row.title}
+			{rows.length > 0 && (
+				<TableContainer>
+					<Table className="table" align="center" sx={{ maxWidth: 400 }} aria-label="simple table">
+						<TableHead>
+							<TableRow className="tr">
+								{/* <TableCell></TableCell> */}
+								<TableCell className="th">Name</TableCell>
+								<TableCell className="th" align="right">
+									Classroom
 								</TableCell>
-								<TableCell className="td" align="right">
-									{row.classroomName}
+								<TableCell className="th" align="right">
+									Date
 								</TableCell>
-
-								<TableCell className="td" align="right">
-									{moment(row.date).format("YYYY-MM-DD")}
+								<TableCell className="th" align="right">
+									Time
 								</TableCell>
-								<TableCell className="td" align="right">
-									{row.startTime}h - {row.endTime}h
-								</TableCell>
-								<TableCell className="td">
-									<button className="btn" onClick={() => handleAccept(row.id)} style={{ backgroundColor: "green" }}>
-										{" "}
-										ACCEPT ✔
-									</button>
-								</TableCell>
-								<TableCell className="td">
-									<button className="btn" onClick={() => handleDecline(row.id)} style={{ backgroundColor: "red" }}>
-										DECLINE ❌
-									</button>
-								</TableCell>
+								<TableCell className="th">Accept</TableCell>
+								<TableCell className="th">Decline</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-					<button className="btnAll" onClick={() => handleAcceptAll()}>
-						ACCEPT ALL
-					</button>
-				</Table>
-			</TableContainer>
+						</TableHead>
+						<TableBody>
+							{rows.map(row => (
+								<TableRow className="tr" key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+									<TableCell className="td" align="right">
+										{row.title}
+									</TableCell>
+									<TableCell className="td" align="right">
+										{row.classroomName}
+									</TableCell>
+
+									<TableCell className="td" align="right">
+										{moment(row.date).format("YYYY-MM-DD")}
+									</TableCell>
+									<TableCell className="td" align="right">
+										{row.startTime}h - {row.endTime}h
+									</TableCell>
+									<TableCell className="td">
+										<button className="btn" onClick={() => handleAccept(row.id)} style={{ backgroundColor: "green" }}>
+											{" "}
+											ACCEPT ✔
+										</button>
+									</TableCell>
+									<TableCell className="td">
+										<button className="btn" onClick={() => handleDecline(row.id)} style={{ backgroundColor: "red" }}>
+											DECLINE ❌
+										</button>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+						<TableCell>
+							<button className="btnAll" onClick={() => handleAcceptAll()}>
+								ACCEPT ALL
+							</button>
+						</TableCell>
+					</Table>
+				</TableContainer>
+			)}
 
 			{loading && (
 				<Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={loading}>

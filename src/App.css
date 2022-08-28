@@ -3,13 +3,19 @@ body{
     box-sizing: border-box;
     margin:0;
     padding:0;
+ 
 }
 
 .rbc-event{
-    background-color: #3f5972;
+    background-color: #02a186 !important;
+    
 }
 
-/* #3f5972 */
+.rbc-calendar {
+    margin: 0 10px;
+}
+
+
 
 
 .appDiv{
@@ -17,14 +23,16 @@ body{
 }
 
 .glavniDiv{
+   
     flex: 4;
-    margin: 0 20px;
+    /* margin: 0 20px; */
 }
 
 
 .Sidebar {
-    height: 765px;
-    width: 212px;
+    height: 785px;
+    width: 200px;
+    min-width: 110px;
     background-color: #2F4050;
 }
 
@@ -239,7 +247,12 @@ body{
     flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin-top: 20px;
+        background-color: #2F4050;
+        height: 67px;
+        color: #fff;
+        margin-bottom: 20px;
+        
+       
 }
 
 
@@ -292,8 +305,16 @@ display: block;
 
 
 .dugmad {
-    margin-bottom: 6px;
+    
+    display: flex;
+    gap: 10px;
+    align-items: center;
 } 
+
+.dugmad span {
+    font-size: 17px;
+    
+}
 
 /* Requests */
 .resside{

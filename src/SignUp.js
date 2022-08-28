@@ -7,7 +7,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import FonImage from "./fon.png";
 function SignUp() {
 	const navigate = useNavigate();
 	const [values, setValues] = useState({
@@ -155,6 +155,9 @@ function SignUp() {
 	return (
 		<>
 			<div className="app">
+				<header>
+					<img src={FonImage}></img>
+				</header>
 				<form id="myForm" onSubmit={e => handleSubmit(e)}>
 					<div>
 						<h1>Register</h1>
@@ -169,7 +172,9 @@ function SignUp() {
 						<p>
 							Already have account?
 							<span>
-								<Link to="/">Sign in</Link>
+								<Link className="dontHave" to="/">
+									Sign in.
+								</Link>
 							</span>
 						</p>
 					</div>

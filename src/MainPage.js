@@ -46,7 +46,8 @@ const localizer = dateFnsLocalizer({
 });
 
 function MainPage() {
-	const { auth, setAuth } = useContext(AuthContext);
+	// const { auth, setAuth } = useContext(AuthContext);
+	const [authUser, setAuthUser] = useState(getInitialState);
 
 	let startObject = {
 		id: Math.floor(Math.random() * 10000),
@@ -85,13 +86,22 @@ function MainPage() {
 	const [appointmentDetails, setAppointmentDetails] = useState(startObject);
 	const [loading, setLoading] = useState(false);
 
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		// const admin = JSON.parse(localStorage.getItem("admin"));
+
+		// const parseddUser = JSON.parse(user);
+
+		return user ? JSON.parse(user) : {};
+	}
+
 	useEffect(() => {
 		console.log("IN useEffect!");
 
 		const fetchClassroomTypes = async () => {
 			try {
 				let response = await axios.get(`common/classroom/names`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
 				// zaglavlje tabele
 				let resourceMap = [];
@@ -102,7 +112,7 @@ function MainPage() {
 					});
 				});
 
-				console.log(resourceMap);
+				console.log("classroom types", resourceMap);
 
 				setClassroomTypes(resourceMap);
 			} catch (err) {
@@ -117,7 +127,7 @@ function MainPage() {
 				// var dateFormat = moment(date1).format("YYYY-MM-DD");
 				// const response = await axios.post(`/appointment/${dateFormat}`,{},{ headers: { Authorization: `Bearer ${auth.token}` } });
 
-				let response = await axios.get(`/appointment`, { headers: { Authorization: `Bearer ${auth.token}` } });
+				let response = await axios.get(`/appointment`, { headers: { Authorization: `Bearer ${authUser.token}` } });
 
 				const appointments = response.data;
 				const newAr = [];
@@ -146,7 +156,7 @@ function MainPage() {
 		const fetchClassroomNameTypeAttendies = async () => {
 			try {
 				let response = await axios.get(`classroom/table`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
 				setRows(response.data);
 			} catch (err) {
@@ -157,7 +167,7 @@ function MainPage() {
 		const fetchAppointmentTypes = async () => {
 			try {
 				let response = await axios.get(`common/appointment/types`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
 				let ar = [];
 				// if (!response.data.length) {
@@ -180,31 +190,34 @@ function MainPage() {
 		fetchAppointmentTypes();
 	}, [openPopup, openDetailsPopup]);
 
+	// console.log("events", allEvents);
+	// console.log("app type", appointmentTypes);
+	console.log("User", authUser);
+
 	useEffect(() => {
-		isUserAdmin();
-		console.log("Inside another LIVE!!");
-	}, []);
+		async function isUserAdmin() {
+			try {
+				let response = await axios.get(`user/admin`, {
+					headers: { Authorization: `Bearer ${authUser.token}` },
+				});
 
-	async function isUserAdmin() {
-		try {
-			let response = await axios.get(`user/admin`, {
-				headers: { Authorization: `Bearer ${auth.token}` },
-			});
-
-			if (response.status === 200) {
-				setAuth({ ...auth, admin: response.data });
+				if (response.status === 200) {
+					localStorage.setItem("admin", response.data);
+					setAuthUser({ ...authUser, admin: response.data });
+				}
+			} catch (err) {
+				console.log(err); // not in 200
 			}
-		} catch (err) {
-			console.log(err); // not in 200
 		}
-	}
+		isUserAdmin();
+	}, []);
 
 	async function handleReserve() {
 		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
 
 		const arrayOfBojects = appointmentsToReserve.map(el => {
 			return {
-				email: auth.email,
+				email: authUser.email,
 				classroomId: el.classroom.id,
 				name: el.title,
 				date: dateFormated,
@@ -222,11 +235,11 @@ function MainPage() {
 
 		try {
 			let response = await axios.post(`appointment/reserve`, arrayOfBojects, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 
 			if (response.status === 200) {
-				if (auth.admin === true) {
+				if (authUser.admin === true) {
 					notifySuccess("The appointments have been successfully reserved");
 				} else {
 					notifyInfo("The appointments have been sent for approval");
@@ -272,7 +285,7 @@ function MainPage() {
 
 		try {
 			let response = await axios.post(`appointment/available`, obj, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 			const entry = checkForReserveConflict();
 			console.log(entry);
@@ -312,16 +325,16 @@ function MainPage() {
 			return;
 		}
 		isClassroomAvailableForDate();
-		setNewFormEvent(startObject);
+		// setNewFormEvent(startObject);
 	}
 
-	console.log("After render", newFormEvent);
+	// console.log("After render", newFormEvent);
 	// console.log("AFter render", appointmentsToReserve);
 
 	async function getAppointmentDetails(id) {
 		try {
 			let response = await axios.get(`appointment/details?id=${id}`, {
-				headers: { Authorization: `Bearer ${auth.token}` },
+				headers: { Authorization: `Bearer ${authUser.token}` },
 			});
 
 			setAppointmentDetails({
@@ -389,12 +402,16 @@ function MainPage() {
 		});
 	};
 
+	console.log(newFormEvent);
+	console.log(appointmentsToReserve);
+	console.log("datee", moment(newFormEvent.date).format("YYYY-MM-DD"));
+
 	return (
 		<div className="glavniDiv">
 			{/* Ovaj div u novu komponentu */}
 			<div className="aa">
 				<div className="dugmad">
-					{/* <span>Add new appointment</span> */}
+					<span>Add appointment</span>
 					<AddCircleIcon fontSize="large" onClick={() => setOpenPopup(true)}></AddCircleIcon>
 				</div>
 			</div>
@@ -410,7 +427,7 @@ function MainPage() {
 					<div className="laga">
 						<div className="appDetails">
 							<div className="formRow">
-								<span class="details">Title*</span>
+								<span className="details">Title*</span>
 								<input
 									type="text"
 									placeholder="Add Title"
@@ -422,7 +439,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Reason*</span>
+								<span className="details">Reason*</span>
 								<input
 									type="text"
 									placeholder="Add Reason"
@@ -434,7 +451,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Description*</span>
+								<span className="details">Description*</span>
 								<input
 									type="text"
 									placeholder="Add Desc"
@@ -446,7 +463,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Attendies*</span>
+								<span className="details">Attendies*</span>
 								<input
 									type="number"
 									placeholder="Add number of attendies"
@@ -464,7 +481,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Date*</span>
+								<span className="details">Date*</span>
 								<DatePicker
 									className="datepick"
 									placeholderText="Date"
@@ -475,7 +492,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Type*</span>
+								<span className="details">Type*</span>
 								<Select
 									className="selectmainPage"
 									value={newFormEvent.type.label}
@@ -486,7 +503,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">Start time*</span>
+								<span className="details">Start time*</span>
 								<input
 									min="08:00"
 									max="20:00"
@@ -507,7 +524,7 @@ function MainPage() {
 							</div>
 
 							<div className="formRow">
-								<span class="details">End time*</span>
+								<span className="details">End time*</span>
 								<input
 									min="08:00"
 									max="20:00"
@@ -543,7 +560,7 @@ function MainPage() {
 					{/* Tabela gde punim dodate termine  */}
 					<div className="showReser">
 						<BasicTable
-							auth={auth}
+							auth={authUser}
 							rows={appointmentsToReserve}
 							setAppointmentsToReserve={setAppointmentsToReserve}
 							setNewFormEvent={setNewFormEvent}

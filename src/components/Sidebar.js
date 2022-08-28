@@ -8,18 +8,24 @@ import avatarImage from "../avatar.png";
 
 function Sidebar() {
 	let navigate = useNavigate();
-	const { auth, setAuth } = useContext(AuthContext);
+	// const { auth, setAuth } = useContext(AuthContext);
+	const [authUser, setAuthUser] = useState(getInitialState);
 	const [users, setUsers] = useState([]);
 	const [user, setUser] = useState({});
+
+	function getInitialState() {
+		const user = localStorage.getItem("user");
+		return user ? JSON.parse(user) : {};
+	}
 
 	useEffect(() => {
 		const fetchPendingAppointmentsForUser = async () => {
 			try {
 				let response = await axios.get(`user/appointments-requested`, {
 					responseType: "json",
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
-				console.log(response.data);
+
 				setUsers(response.data);
 			} catch (err) {
 				console.log(err);
@@ -29,7 +35,7 @@ function Sidebar() {
 		const fetchUserDetails = async () => {
 			try {
 				let response = await axios.get(`/user`, {
-					headers: { Authorization: `Bearer ${auth.token}` },
+					headers: { Authorization: `Bearer ${authUser.token}` },
 				});
 
 				setUser(response.data);
@@ -40,14 +46,12 @@ function Sidebar() {
 
 		fetchPendingAppointmentsForUser();
 		fetchUserDetails();
-	}, []);
+	}, [users]);
 
 	function handleLink(link) {
-		console.log("pre", auth);
 		if (link === "/") {
+			localStorage.clear();
 			navigate(link);
-			setAuth(null);
-			console.log("posle", auth);
 		} else {
 			navigate(link);
 		}
