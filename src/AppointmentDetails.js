@@ -57,7 +57,7 @@ function AppointmentDetails(props) {
 				setOpenPopup(false);
 			}
 		} catch (err) {
-			notifyError("Error");
+			notifyError("Error, appointment have not been deleted");
 		}
 	}
 
@@ -116,24 +116,42 @@ function AppointmentDetails(props) {
 				<div className={editOn ? "containerWithoutFlex" : "container"}>
 					<div className="card_item">
 						<div className="card_inner">
-							<div className="userName">
-								<p>Name: {appointmentDetails.title}</p>
-								<p>Classroom: {appointmentDetails.classroom.name}</p>
-								<p>Date: {moment(appointmentDetails.date).format("YYYY-MM-DD")}</p>
+							<div className="userNameDetails">
 								<p>
-									Time: {appointmentDetails.start}-{appointmentDetails.end}
+									Name: <span>{appointmentDetails.title}</span>
+								</p>
+								<p>
+									Classroom:<span>{appointmentDetails.classroom.name}</span>{" "}
+								</p>
+								<p>
+									Date: <span>{moment(appointmentDetails.date).format("YYYY-MM-DD")}</span>
+								</p>
+								<p>
+									Time:
+									<span>
+										{" "}
+										{appointmentDetails.start}-{appointmentDetails.end}
+									</span>
 								</p>
 
-								<p>Description:{appointmentDetails.desc}</p>
-								<p>Reason:{appointmentDetails.reason}</p>
-								<p>Attendies:{appointmentDetails.attendies}</p>
-								<p>Appointment type:{appointmentDetails.type.label}</p>
+								<p>
+									Description:<span>{appointmentDetails.desc}</span>
+								</p>
+								<p>
+									Reason:<span>{appointmentDetails.reason}</span>
+								</p>
+								<p>
+									Attendies:<span>{appointmentDetails.attendies}</span>
+								</p>
+								<p>
+									Appointment type:<span>{appointmentDetails.type.label}</span>
+								</p>
 								<div className="detailsButton">
-									<button onClick={() => openForm()} className="seeMore">
+									<button onClick={() => openForm()} className="seeMoree">
 										{" "}
 										Edit
 									</button>
-									<button className="seeMore" onClick={() => handleDelete(appointmentDetails.id)}>
+									<button className="seeMoree" onClick={() => handleDelete(appointmentDetails.id)}>
 										{" "}
 										Delete
 									</button>

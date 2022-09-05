@@ -14,8 +14,8 @@ function SignUp() {
 		email: "",
 		password: "",
 		confirmPassword: "",
-		firstname: "",
-		lastname: "",
+		// firstname: "",
+		// lastname: "",
 		image: "",
 	});
 	const [loading, setLoading] = useState(false);
@@ -54,26 +54,26 @@ function SignUp() {
 			pattern: values.password,
 			required: true,
 		},
-		{
-			id: 4,
-			name: "firstname",
-			type: "text",
-			placeholder: "Firstname",
-			errorMessage: "First name length must be greater than 2 and contains only letters",
-			label: "Firstname",
-			pattern: "^[a-zA-Z].{2,}$",
-			required: true,
-		},
-		{
-			id: 5,
-			name: "lastname",
-			type: "text",
-			placeholder: "Lastname",
-			errorMessage: "Last name length must be greater than 2 and contains only letters",
-			label: "Lastname",
-			pattern: "^[a-zA-Z].{2,}$",
-			required: true,
-		},
+		// {
+		// 	id: 4,
+		// 	name: "firstname",
+		// 	type: "text",
+		// 	placeholder: "Firstname",
+		// 	errorMessage: "First name length must be greater than 2",
+		// 	label: "Firstname",
+		// 	pattern: "^[a-zA-Z].{2,}$",
+		// 	required: true,
+		// },
+		// {
+		// 	id: 5,
+		// 	name: "lastname",
+		// 	type: "text",
+		// 	placeholder: "Lastname",
+		// 	errorMessage: "Last name length must be greater than 2",
+		// 	label: "Lastname",
+		// 	pattern: "^[a-zA-Z].{2,}$",
+		// 	required: true,
+		// },
 		// {
 		// 	id: 6,
 		// 	name: "simage",
@@ -116,24 +116,14 @@ function SignUp() {
 	};
 
 	async function handleSubmit(e) {
-		e.preventDefault();
 		setLoading(prev => !prev);
-
-		// setValues({
-		// 	email: "",
-		// 	password: "",
-		// 	confirmPassword: "",
-		// 	firstname: "",
-		// 	lastname: "",
-		// });
-		// const fd = new FormData();
-		// fd.append("image", values.image, values.image.name);
+		e.preventDefault();
 
 		const objectToSend = {
 			email: values.email,
 			password: values.password,
-			firstName: values.firstname,
-			lastName: values.lastname,
+			// firstName: values.firstname,
+			// lastName: values.lastname,
 			image: "",
 		};
 

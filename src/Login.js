@@ -7,6 +7,8 @@ import "./login.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import FonImage from "./fon.png";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
 	// const { setAuth } = useContext(AuthContext); // postavljanje globalnog korisnika
@@ -20,6 +22,30 @@ function Login() {
 		username: "",
 		password: "",
 	});
+
+	const notifySuccess = text => {
+		toast.success(text, {
+			position: "bottom-center",
+			autoClose: 1000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
+
+	const notifyError = text => {
+		toast.error(text, {
+			position: "bottom-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+		});
+	};
 
 	const inputs = [
 		{
@@ -69,6 +95,8 @@ function Login() {
 				const accessToken = response?.headers?.validationtoken;
 				localStorage.setItem("user", JSON.stringify({ email: values.username, token: accessToken }));
 				// setAuth({ email: values.username, token: accessToken });
+
+				notifySuccess("Login successful");
 
 				setSuccess(true);
 			} else {

@@ -86,7 +86,7 @@ function RequestsByUserPage() {
 				notifyInfo("Appointment accepted");
 				setDataChanged(prev => !prev);
 			} else {
-				notifyError("Error!");
+				notifyError("Error, failed to accept appointment !");
 			}
 		} catch (err) {
 			console.log(err);
@@ -110,7 +110,7 @@ function RequestsByUserPage() {
 				notifyInfo("Appointment declined");
 				setDataChanged(prev => !prev);
 			} else {
-				notifyError("Error!");
+				notifyError("Error, failed to decline appointment");
 			}
 		} catch (err) {
 			console.log(err);
@@ -133,7 +133,7 @@ function RequestsByUserPage() {
 				notifyInfo("All appointments accepted");
 				setDataChanged(prev => !prev);
 			} else {
-				notifyError("Error!");
+				notifyError("Error, failed to accept all appointments !");
 			}
 		} catch (err) {
 			console.log(err);

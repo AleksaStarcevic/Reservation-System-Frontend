@@ -85,6 +85,7 @@ function MainPage() {
 	const [openDetailsPopup, setOpenDetailsPopup] = useState(false);
 	const [appointmentDetails, setAppointmentDetails] = useState(startObject);
 	const [loading, setLoading] = useState(false);
+	const [emptyFields, setEmptyFields] = useState(false);
 
 	function getInitialState() {
 		const user = localStorage.getItem("user");
@@ -213,14 +214,14 @@ function MainPage() {
 	}, []);
 
 	async function handleReserve() {
-		let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
+		// let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
 
 		const arrayOfBojects = appointmentsToReserve.map(el => {
 			return {
 				email: authUser.email,
 				classroomId: el.classroom.id,
 				name: el.title,
-				date: dateFormated,
+				date: moment(el.date).format("YYYY-MM-DD"),
 				decription: el.desc,
 				reason: el.reason,
 				number_of_attendies: parseInt(el.attendies),
@@ -245,7 +246,7 @@ function MainPage() {
 					notifyInfo("The appointments have been sent for approval");
 				}
 			} else {
-				notifyError("Error!");
+				notifyError("Error, appointmnets have not been reserved!");
 			}
 		} catch (err) {
 			console.log(err); // not in 200
@@ -321,11 +322,13 @@ function MainPage() {
 			newFormEvent.end === "" ||
 			newFormEvent.attendies === ""
 		) {
+			setEmptyFields(true);
 			notifyError("All fields must be filled!");
 			return;
 		}
 		isClassroomAvailableForDate();
-		// setNewFormEvent(startObject);
+		setNewFormEvent(startObject);
+		setEmptyFields(false);
 	}
 
 	// console.log("After render", newFormEvent);
@@ -429,6 +432,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Title*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									type="text"
 									placeholder="Add Title"
 									style={{ width: "20%", marginRight: "10px" }}
@@ -441,6 +445,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Reason*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									type="text"
 									placeholder="Add Reason"
 									style={{ width: "20%", marginRight: "10px" }}
@@ -453,6 +458,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Description*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									type="text"
 									placeholder="Add Desc"
 									style={{ width: "20%", marginRight: "10px" }}
@@ -465,6 +471,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Attendies*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									type="number"
 									placeholder="Add number of attendies"
 									style={{ width: "20%", marginRight: "10px" }}
@@ -483,7 +490,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Date*</span>
 								<DatePicker
-									className="datepick"
+									className={emptyFields ? "inputsEmpty" : "datepick"}
 									placeholderText="Date"
 									// style={{ marginRight: "10px" }}
 									selected={newFormEvent.date}
@@ -494,7 +501,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Type*</span>
 								<Select
-									className="selectmainPage"
+									className={emptyFields ? "inputsEmpty" : "selectmainPage"}
 									value={newFormEvent.type.label}
 									onChange={e => setNewFormEvent({ ...newFormEvent, type: e.value })}
 									options={appointmentTypes}
@@ -505,6 +512,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">Start time*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									min="08:00"
 									max="20:00"
 									step="3600"
@@ -526,6 +534,7 @@ function MainPage() {
 							<div className="formRow">
 								<span className="details">End time*</span>
 								<input
+									className={emptyFields && "inputsEmpty"}
 									min="08:00"
 									max="20:00"
 									step="3600"

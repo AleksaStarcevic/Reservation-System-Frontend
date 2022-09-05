@@ -46,7 +46,7 @@ function Sidebar() {
 
 		fetchPendingAppointmentsForUser();
 		fetchUserDetails();
-	}, [users]);
+	}, []);
 
 	function handleLink(link) {
 		if (link === "/") {

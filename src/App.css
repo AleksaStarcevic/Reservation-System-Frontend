@@ -216,9 +216,9 @@ body{
 
 }
 
-/* .formRow {
-    display: flex;
-} */
+.formRow .inputsEmpty {
+    border: 1px solid red;
+}
 
  
 
@@ -370,7 +370,7 @@ padding: 40px 20px 20px 20px;
     background: rgba(253, 253, 253, 0.808);
     border-radius: 10px;
     padding: 35px 20px;
-    min-width: 225px;
+    min-width: 250px;
     min-height: 315px;
     max-height: 490px;
     width: 100%;
@@ -393,6 +393,39 @@ box-shadow: 0 2px 15px rgba(119, 119, 119, 0.7);
         cursor: pointer;
         box-shadow: 0 10px 10px hsl(225, 100%, 94%);
 
+}
+
+.seeMoree {
+    margin: 10px auto;
+        width: 100px;
+        height: 35px;
+        background: #293846;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+       
+}
+
+.userNameDetails span{
+    margin-left: 3px;
+    color: #02a186;
+        font-weight: 600;
+        font-size: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+}
+
+.userNameDetails{
+    color: #203150;
+        font-weight: 600;
+        font-size: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 500px;
 }
  
 

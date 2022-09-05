@@ -8,7 +8,7 @@ import ReservationsPage from "./ReservationsPage";
 import AccountPage from "./AccountPage";
 import RequestsByUserPage from "./components/RequestsByUserPage";
 import SidebarLayout from "./components/SidebarLayout";
-
+import EmployeesPage from "./EmployeesPage";
 function App() {
 	return (
 		<div className="appDiv">
@@ -20,6 +20,7 @@ function App() {
 					<Route path="/main" element={<MainPage />} />
 					<Route path="/user/reservations" element={<ReservationsPage />} />
 					<Route path="/account" element={<AccountPage />} />
+					<Route path="/employees" element={<EmployeesPage />} />
 					<Route path="/user/reservations/pending/:id" element={<RequestsByUserPage />} />
 					<Route path="*" element={<ErrorPage />} />
 				</Route>

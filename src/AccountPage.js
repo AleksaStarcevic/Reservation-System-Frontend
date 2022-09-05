@@ -91,7 +91,7 @@ function AccountPage() {
 			if (response.status === 200) {
 				notifySuccess("Email changed successfully");
 			} else {
-				notifyError("Error");
+				notifyError("Error, email has not been changed");
 			}
 		} catch (err) {
 			console.log(err);
@@ -116,7 +116,7 @@ function AccountPage() {
 			if (response.status === 200) {
 				notifySuccess("Password changed successfully");
 			} else {
-				notifyError("Error");
+				notifyError("Error, password has not been changed");
 			}
 		} catch (err) {
 			console.log(err);

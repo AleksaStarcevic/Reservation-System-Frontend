@@ -30,7 +30,7 @@ function ReservationsPage() {
 						responseType: "json",
 						headers: { Authorization: `Bearer ${authUser.token}` },
 					});
-
+					console.log(response.data);
 					setUsers(response.data);
 				} catch (err) {
 					console.log(err);
