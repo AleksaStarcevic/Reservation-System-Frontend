@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../App.css";
-import { SidebarData } from "./SidebarData";
+import { SidebarDataAdmin } from "./SidebarData";
+import { SidebarDataUser } from "./SidebarDataUser";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
 import axios from "../api/axios";
@@ -56,6 +57,15 @@ function Sidebar() {
 			navigate(link);
 		}
 	}
+
+	let SidebarData = "";
+	if (authUser.admin) {
+		SidebarData = SidebarDataAdmin;
+	} else {
+		SidebarData = SidebarDataUser;
+	}
+
+	// console.log(SidebarData);
 
 	return (
 		<div className="Sidebar">

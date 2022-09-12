@@ -28,12 +28,9 @@ function EmployeesPage() {
 
 	function getInitialState() {
 		const user = localStorage.getItem("user");
-		const admin = JSON.parse(localStorage.getItem("admin"));
-
-		const parseddUser = JSON.parse(user);
-
-		return user ? { ...parseddUser, admin: admin } : {};
+		return user ? JSON.parse(user) : {};
 	}
+
 	const notifySuccess = text => {
 		toast.success(text, {
 			position: "bottom-center",
@@ -59,18 +56,14 @@ function EmployeesPage() {
 	};
 
 	useEffect(() => {
-		// samo ako je user admin
-
 		const fetchEmployees = async () => {
-			if (authUser.admin === true) {
-				try {
-					let response = await axios.get(`user/employees`, {
-						headers: { Authorization: `Bearer ${authUser.token}` },
-					});
-					setUsers(response.data);
-				} catch (err) {
-					console.log(err);
-				}
+			try {
+				let response = await axios.get(`user/employees`, {
+					headers: { Authorization: `Bearer ${authUser.token}` },
+				});
+				setUsers(response.data);
+			} catch (err) {
+				console.log(err);
 			}
 		};
 
@@ -132,10 +125,12 @@ function EmployeesPage() {
 			}
 		};
 
-		fetchEmployees();
-		fetchDepartments();
-		fetchTypes();
-		fetchTitles();
+		if (authUser.admin) {
+			fetchEmployees();
+			fetchDepartments();
+			fetchTypes();
+			fetchTitles();
+		}
 	}, [openPopup]);
 
 	async function handleAddEmployee() {
@@ -150,7 +145,7 @@ function EmployeesPage() {
 	}
 
 	return (
-		<>
+		<div className="glavniDiv">
 			<div className="aa">
 				<div className="dugmad">
 					<span>Add employee</span>
@@ -179,50 +174,55 @@ function EmployeesPage() {
 			</div>
 
 			<PopUp title="Add employee" openPopup={openPopup} setOpenPopup={setOpenPopup}>
-				<input
-					type="email"
-					placeholder="Add Email"
-					style={{ width: "20%", marginRight: "10px" }}
-					value={newEmployee.email}
-					onChange={e => setNewEmployee({ ...newEmployee, email: e.target.value })}
-				/>
-				<input
-					type="text"
-					placeholder="Add Firstname"
-					style={{ width: "20%", marginRight: "10px" }}
-					value={newEmployee.firstName}
-					onChange={e => setNewEmployee({ ...newEmployee, firstName: e.target.value })}
-				/>
-				<input
-					type="text"
-					placeholder="Add Lastname"
-					style={{ width: "20%", marginRight: "10px" }}
-					value={newEmployee.lastName}
-					onChange={e => setNewEmployee({ ...newEmployee, lastName: e.target.value })}
-				/>
-				<Select
-					value={newEmployee.department.label}
-					onChange={e => setNewEmployee({ ...newEmployee, department: e.value })}
-					options={departments}
-					placeholder="Add department"
-				/>
-				<Select
-					value={newEmployee.type.label}
-					onChange={e => setNewEmployee({ ...newEmployee, type: e.value })}
-					options={types}
-					placeholder="Add type"
-				/>
-				<Select
-					value={newEmployee.title.label}
-					onChange={e => setNewEmployee({ ...newEmployee, title: e.value })}
-					options={titles}
-					placeholder="Add title"
-				/>
-				<button className="btnAddEvent" style={{ marginTop: "10px" }} onClick={handleAddEmployee}>
-					Add employee
-				</button>
+				<div className="empDiv">
+					<input
+						type="email"
+						placeholder="Add Email"
+						style={{ width: "20%", marginRight: "10px" }}
+						value={newEmployee.email}
+						onChange={e => setNewEmployee({ ...newEmployee, email: e.target.value })}
+					/>
+					<input
+						type="text"
+						placeholder="Add Firstname"
+						style={{ width: "20%", marginRight: "10px" }}
+						value={newEmployee.firstName}
+						onChange={e => setNewEmployee({ ...newEmployee, firstName: e.target.value })}
+					/>
+					<input
+						type="text"
+						placeholder="Add Lastname"
+						style={{ width: "20%", marginRight: "10px" }}
+						value={newEmployee.lastName}
+						onChange={e => setNewEmployee({ ...newEmployee, lastName: e.target.value })}
+					/>
+					<Select
+						className="empSelect"
+						value={newEmployee.department.label}
+						onChange={e => setNewEmployee({ ...newEmployee, department: e.value })}
+						options={departments}
+						placeholder="Add department"
+					/>
+					<Select
+						className="empSelect"
+						value={newEmployee.type.label}
+						onChange={e => setNewEmployee({ ...newEmployee, type: e.value })}
+						options={types}
+						placeholder="Add type"
+					/>
+					<Select
+						className="empSelect"
+						value={newEmployee.title.label}
+						onChange={e => setNewEmployee({ ...newEmployee, title: e.value })}
+						options={titles}
+						placeholder="Add title"
+					/>
+					<button className="btnAddEventEmp" style={{ marginTop: "10px" }} onClick={handleAddEmployee}>
+						Add employee
+					</button>
+				</div>
 			</PopUp>
-		</>
+		</div>
 	);
 }
 

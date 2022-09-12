@@ -7,28 +7,18 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import BadgeIcon from "@mui/icons-material/Badge";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 
-export const SidebarDataAdmin = [
+export const SidebarDataUser = [
 	{
 		title: "Home",
 		icon: <HomeIcon />,
 		link: "/main",
-	},
-
-	{
-		title: "Requests",
-		icon: <CalendarMonthIcon />,
-		link: "user/reservations",
-	},
-	{
-		title: "Employees",
-		icon: <BadgeIcon />,
-		link: "/employees",
 	},
 	{
 		title: "My appointments",
 		icon: <PermContactCalendarIcon />,
 		link: "/appointments",
 	},
+
 	{
 		title: "Account",
 		icon: <AccountCircleIcon />,

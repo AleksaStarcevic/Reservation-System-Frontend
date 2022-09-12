@@ -89,11 +89,29 @@ function Login() {
 				}
 			);
 
+			console.log(response.data);
+
 			setLoading(false);
 
+			let admin = "";
 			if (response.headers.validationtoken) {
 				const accessToken = response?.headers?.validationtoken;
-				localStorage.setItem("user", JSON.stringify({ email: values.username, token: accessToken }));
+
+				try {
+					let response = await axios.get(`user/admin`, {
+						headers: { Authorization: `Bearer ${accessToken}` },
+					});
+
+					if (response.status === 200) {
+						admin = response.data;
+						// localStorage.setItem("admin", response.data);
+						// setAuthUser({ ...authUser, admin: response.data });
+					}
+				} catch (err) {
+					console.log(err); // not in 200
+				}
+
+				localStorage.setItem("user", JSON.stringify({ email: values.username, token: accessToken, admin: admin }));
 				// setAuth({ email: values.username, token: accessToken });
 
 				notifySuccess("Login successful");

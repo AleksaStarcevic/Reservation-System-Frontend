@@ -68,7 +68,7 @@ function AccountPage() {
 
 				setUser(response.data);
 			} catch (err) {
-				console.log(err);
+				notifyError("Error, user have not been loaded");
 			}
 		};
 

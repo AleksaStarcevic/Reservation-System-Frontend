@@ -11,34 +11,27 @@ function ReservationsPage() {
 
 	function getInitialState() {
 		const user = localStorage.getItem("user");
-		const admin = JSON.parse(localStorage.getItem("admin"));
-
-		const parseddUser = JSON.parse(user);
-
-		return user ? { ...parseddUser, admin: admin } : {};
+		return user ? JSON.parse(user) : {};
 	}
-
-	console.log(authUser);
 
 	useEffect(() => {
 		// samo ako je user admin
 
 		const fetchPendingAppointmentsForUser = async () => {
-			if (authUser.admin === true) {
-				try {
-					let response = await axios.get(`user/appointments-requested`, {
-						responseType: "json",
-						headers: { Authorization: `Bearer ${authUser.token}` },
-					});
-					console.log(response.data);
-					setUsers(response.data);
-				} catch (err) {
-					console.log(err);
-				}
+			try {
+				let response = await axios.get(`user/appointments-requested`, {
+					responseType: "json",
+					headers: { Authorization: `Bearer ${authUser.token}` },
+				});
+				console.log(response.data);
+				setUsers(response.data);
+			} catch (err) {
+				console.log(err);
 			}
 		};
-
-		fetchPendingAppointmentsForUser();
+		if (authUser.admin === true) {
+			fetchPendingAppointmentsForUser();
+		}
 	}, []);
 
 	return (

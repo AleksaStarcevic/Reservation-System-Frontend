@@ -89,10 +89,6 @@ function MainPage() {
 
 	function getInitialState() {
 		const user = localStorage.getItem("user");
-		// const admin = JSON.parse(localStorage.getItem("admin"));
-
-		// const parseddUser = JSON.parse(user);
-
 		return user ? JSON.parse(user) : {};
 	}
 
@@ -193,25 +189,6 @@ function MainPage() {
 
 	// console.log("events", allEvents);
 	// console.log("app type", appointmentTypes);
-	console.log("User", authUser);
-
-	useEffect(() => {
-		async function isUserAdmin() {
-			try {
-				let response = await axios.get(`user/admin`, {
-					headers: { Authorization: `Bearer ${authUser.token}` },
-				});
-
-				if (response.status === 200) {
-					localStorage.setItem("admin", response.data);
-					setAuthUser({ ...authUser, admin: response.data });
-				}
-			} catch (err) {
-				console.log(err); // not in 200
-			}
-		}
-		isUserAdmin();
-	}, []);
 
 	async function handleReserve() {
 		// let dateFormated = moment(newFormEvent.date).format("YYYY-MM-DD");
@@ -405,9 +382,8 @@ function MainPage() {
 		});
 	};
 
-	console.log(newFormEvent);
-	console.log(appointmentsToReserve);
-	console.log("datee", moment(newFormEvent.date).format("YYYY-MM-DD"));
+	// console.log(newFormEvent);
+	// console.log(appointmentsToReserve);
 
 	return (
 		<div className="glavniDiv">

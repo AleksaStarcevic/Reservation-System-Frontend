@@ -582,3 +582,43 @@ box-shadow: 0 2px 15px rgba(119, 119, 119, 0.7);
 }
 
 
+
+.laga input {
+    padding: 15px;
+    margin: 5px 0px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+.empDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.empDiv input {
+    padding: 15px;
+        margin: 5px 0px;
+        border-radius: 5px;
+        border: 1px solid gray;
+}
+
+.empDiv .empSelect{
+  margin-bottom: 7px;
+  width: 259px;
+    
+}
+
+.btnAddEventEmp{
+    /* position: relative;
+        left: 240px; */
+        width: 100px;
+        padding: 10px 15px;
+        margin-top: 20px !important;
+        border-radius: 4px;
+        background-color: #2F4050;
+    
+        color: #fff;
+        cursor: pointer;
+}
